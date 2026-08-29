@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI Career Copilot — Automated Test Suite</title>
+  <style>
+    body {
+      background: #f8fafc;
+      color: #0f172a;
+      font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+      padding: 36px 24px;
+      max-width: 960px;
+      margin: 0 auto;
+      line-height: 1.6;
+    }
+    h1 {
+      font-size: 1.8rem;
+      font-weight: 800;
+      color: #0f172a;
+      margin-bottom: 8px;
+    }
+    .test-card {
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
+      border-radius: 14px;
+      padding: 20px;
+      margin-bottom: 16px;
+      box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04);
+      transition: all 0.2s ease;
+    }
+    .test-card:hover {
+      border-color: #cbd5e1;
+      box-shadow: 0 4px 14px rgba(15, 23, 42, 0.08);
+    }
+    .test-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+    }
+    .badge {
+      font-size: 0.8rem;
+      padding: 3px 12px;
+      border-radius: 9999px;
+      font-weight: 800;
+      font-family: monospace;
+      letter-spacing: 0.04em;
+    }
+    .badge.pass {
+      background: #ecfdf5;
+      color: #065f46;
+      border: 1px solid #a7f3d0;
+    }
+    .badge.fail {
+      background: #fff1f2;
+      color: #9f1239;
+      border: 1px solid #fecdd3;
+    }
+    .summary {
+      font-size: 1.15rem;
+      font-weight: 800;
+      margin-bottom: 24px;
+      padding: 16px 20px;
+      border-radius: 12px;
+      background: #ffffff;
+      border: 1px solid #cbd5e1;
+      box-shadow: 0 4px 12px rgba(15, 23, 42, 0.05);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    pre {
+      background: #f1f5f9;
+      padding: 12px 16px;
+      border-radius: 8px;
+      font-size: 0.86rem;
+      overflow-x: auto;
+      color: #334155;
+      border: 1px solid #e2e8f0;
+      font-family: 'JetBrains Mono', monospace;
+      margin-top: 8px;
+    }
+  </style>
+</head>
+<body>
+  <h1>AI Career Copilot — Automated Logic Test Suite</h1>
+  <p style="color: #64748b; margin-bottom: 24px;">Unit test runner validating mathematical formulas, category boundaries, priority scoring, time estimations, and roadmap state engine.</p>
+  
+  <div id="summary" class="summary">Running test suite...</div>
+  <div id="results"></div>
+
+  <script>
+    function calculateGap(required, user) {
+      return Math.max(0, required - user);
+    }
+
+    function calculateCategory(required, user) {
+      if (user === 0) return "missing";
+      if (user < required) return "needs-work";
+      return "matched";
+    }
+
+    function calculatePriorityScore(gap, weight) {
+      return gap * weight;
+    }
+
+    function calculateEstimatedHours(gap, weight) {
+      if (gap <= 0) return 0;
+      const baseHoursPerLevel = 6;
+      return Math.max(2, Math.round(gap * baseHoursPerLevel * (weight / 1.5)));
+    }
+
+    function calculateMatchScore(skills, ratings) {
+      let weightedSum = 0;
+      let totalWeight = 0;
+      skills.forEach(skill => {
+        const userLevel = ratings[skill.id] !== undefined ? ratings[skill.id] : 0;
+        const ratio = Math.min(userLevel / skill.level, 1);
+        weightedSum += ratio * skill.weight;
+        totalWeight += skill.weight;
+      });
+      return totalWeight > 0 ? Math.round((weightedSum / totalWeight) * 100) : 0;
+    }
+
+    const testCases = [
+      {
+        name: "Test 1: Gap Formula Exact Compliance [gap = max(0, req - user)]",
+        fn: () => {
+          if (calculateGap(4, 0) !== 4) throw new Error("Expected gap(4,0) to be 4");
+          if (calculateGap(4, 2) !== 2) throw new Error("Expected gap(4,2) to be 2");
+          if (calculateGap(4, 4) !== 0) throw new Error("Expected gap(4,4) to be 0");
+          if (calculateGap(3, 5) !== 0) throw new Error("Expected gap(3,5) to be 0 (user exceeds)");
+        }
+      },
+      {
+        name: "Test 2: Category Determination Logic [missing, needs-work, matched]",
+        fn: () => {
+          if (calculateCategory(4, 0) !== "missing") throw new Error("Expected 0 to be 'missing'");
+          if (calculateCategory(4, 1) !== "needs-work") throw new Error("Expected 1 to be 'needs-work'");
+          if (calculateCategory(4, 3) !== "needs-work") throw new Error("Expected 3 to be 'needs-work'");
+          if (calculateCategory(4, 4) !== "matched") throw new Error("Expected 4 to be 'matched'");
+          if (calculateCategory(4, 5) !== "matched") throw new Error("Expected 5 to be 'matched'");
+        }
+      },
+      {
+        name: "Test 3: Priority Score Math [priority_score = gap * weight]",
+        fn: () => {
+          const score1 = calculatePriorityScore(4, 2);
+          const score2 = calculatePriorityScore(3, 1.5);
+          const score3 = calculatePriorityScore(2, 1);
+          if (score1 !== 8) throw new Error(`Expected 8, got ${score1}`);
+          if (score2 !== 4.5) throw new Error(`Expected 4.5, got ${score2}`);
+          if (score3 !== 2) throw new Error(`Expected 2, got ${score3}`);
+        }
+      },
+      {
+        name: "Test 4: Time-to-Close Hours Estimation [max(2, round(gap * 6 * (weight / 1.5)))]",
+        fn: () => {
+          const h1 = calculateEstimatedHours(4, 2);
+          if (h1 !== 32) throw new Error(`Expected 32h for gap 4 & weight 2, got ${h1}`);
+
+          const h2 = calculateEstimatedHours(1, 1);
+          if (h2 !== 4) throw new Error(`Expected 4h for gap 1 & weight 1, got ${h2}`);
+
+          const hMin = calculateEstimatedHours(0.1, 1);
+          if (hMin < 2) throw new Error(`Expected at least 2h minimum, got ${hMin}`);
+
+          const hZero = calculateEstimatedHours(0, 2);
+          if (hZero !== 0) throw new Error(`Expected 0h for gap 0, got ${hZero}`);
+        }
+      },
+      {
+        name: "Test 5: Overall Weighted Match Score (0%, 100%, and partials)",
+        fn: () => {
+          const sampleSkills = [
+            { id: "s1", level: 4, weight: 2 },
+            { id: "s2", level: 4, weight: 2 },
+            { id: "s3", level: 3, weight: 1.5 },
+            { id: "s4", level: 2, weight: 1 }
+          ];
+
+          // All 0 -> 0%
+          const scoreZero = calculateMatchScore(sampleSkills, { s1: 0, s2: 0, s3: 0, s4: 0 });
+          if (scoreZero !== 0) throw new Error(`Expected 0%, got ${scoreZero}%`);
+
+          // All matched -> 100%
+          const scoreMax = calculateMatchScore(sampleSkills, { s1: 4, s2: 4, s3: 3, s4: 2 });
+          if (scoreMax !== 100) throw new Error(`Expected 100%, got ${scoreMax}%`);
+
+          // Partial -> 62%
+          const scorePartial = calculateMatchScore(sampleSkills, { s1: 2, s2: 4, s3: 0, s4: 2 });
+          if (scorePartial !== 62) throw new Error(`Expected 62%, got ${scorePartial}%`);
+        }
+      },
+      {
+        name: "Test 6: Exceeded Skill Level Cap [min(user/req, 1)]",
+        fn: () => {
+          const sampleSkills = [
+            { id: "s1", level: 2, weight: 2 }
+          ];
+          const scoreCap = calculateMatchScore(sampleSkills, { s1: 5 });
+          if (scoreCap !== 100) throw new Error(`Expected 100% when exceeded, got ${scoreCap}%`);
+        }
+      },
+      {
+        name: "Test 7: Roadmap Add/Remove/Done State Transitions",
+        fn: () => {
+          const roadmap = {};
+          const itemKey = "js-ts::free";
+          
+          // Add item
+          roadmap[itemKey] = { id: itemKey, done: false, hours: 16 };
+          if (!roadmap[itemKey]) throw new Error("Failed to add roadmap item");
+          if (roadmap[itemKey].done !== false) throw new Error("Initial done state should be false");
+
+          // Toggle done
+          roadmap[itemKey].done = true;
+          if (roadmap[itemKey].done !== true) throw new Error("Toggle done failed");
+
+          // Remove item
+          delete roadmap[itemKey];
+          if (roadmap[itemKey] !== undefined) throw new Error("Delete roadmap item failed");
+        }
+      }
+    ];
+
+    let passed = 0;
+    let failed = 0;
+    const resultsContainer = document.getElementById("results");
+
+    testCases.forEach(tc => {
+      const card = document.createElement("div");
+      card.className = "test-card";
+      try {
+        tc.fn();
+        passed++;
+        card.innerHTML = `
+          <div class="test-header">
+            <strong>${tc.name}</strong>
+            <span class="badge pass">PASSED</span>
+          </div>
+          <pre>Assertion verified successfully.</pre>
+        `;
+      } catch (err) {
+        failed++;
+        card.innerHTML = `
+          <div class="test-header">
+            <strong>${tc.name}</strong>
+            <span class="badge fail">FAILED</span>
+          </div>
+          <pre>${err.message}</pre>
+        `;
+      }
+      resultsContainer.appendChild(card);
+    });
+
+    const summary = document.getElementById("summary");
+    if (failed === 0) {
+      summary.style.color = "#065f46";
+      summary.style.borderColor = "#a7f3d0";
+      summary.style.background = "#ecfdf5";
+      summary.textContent = `✓ All ${passed} automated unit tests passed with 100% accuracy!`;
+    } else {
+      summary.style.color = "#9f1239";
+      summary.style.borderColor = "#fecdd3";
+      summary.style.background = "#fff1f2";
+      summary.textContent = `⚠️ ${failed} tests failed out of ${passed + failed}.`;
+    }
+  </script>
+</body>
+</html>

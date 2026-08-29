@@ -1,0 +1,4104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI Career Copilot — Skill-Gap Analyzer & Career Roadmap</title>
+  
+  <!-- Typography -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+  <style>
+    /* ==========================================================================
+       CSS DESIGN TOKENS & SYSTEM
+       ========================================================================== */
+    :root {
+      /* Base Canvas (Pure Light Porcelain) */
+      --bg-base: #f8fafc;
+      --bg-surface-1: #ffffff;
+      --bg-surface-2: #f1f5f9;
+      --bg-surface-3: #e2e8f0;
+      --bg-card: #ffffff;
+      
+      /* Dark Luxury Contrast Tokens (for 3D Office & Diagnostic HUD) */
+      --bg-dark-surface: #090d16;
+      --bg-dark-card: rgba(15, 23, 42, 0.94);
+      --border-dark-subtle: rgba(255, 255, 255, 0.12);
+      
+      /* Glassmorphic & Border Tokens */
+      --border-subtle: rgba(203, 213, 225, 0.7);
+      --border-medium: rgba(148, 163, 184, 0.5);
+      --border-accent: rgba(79, 70, 229, 0.4);
+      --glass-blur: blur(16px);
+      
+      /* Primary Brand Accents */
+      --accent-primary: #4f46e5;       /* Royal Indigo */
+      --accent-primary-hover: #4338ca;
+      --accent-glow: rgba(79, 70, 229, 0.25);
+      --accent-cyan: #0284c7;          /* Azure Blue */
+      --accent-silver: #94a3b8;        /* Metallic Silver */
+      --accent-emerald: #059669;       /* Emerald */
+      --accent-amber: #d97706;         /* Amber */
+      --accent-rose: #e11d48;          /* Rose Red */
+      --accent-violet: #7c3aed;        /* Violet */
+      --accent-gold: #f59e0b;          /* Gold Accent */
+
+      /* Categorical Badges */
+      --badge-core-bg: #fff1f2;
+      --badge-core-border: #fecdd3;
+      --badge-core-text: #be123c;
+
+      --badge-imp-bg: #fffbeb;
+      --badge-imp-border: #fde68a;
+      --badge-imp-text: #b45309;
+
+      --badge-nice-bg: #f0f9ff;
+      --badge-nice-border: #bae6fd;
+      --badge-nice-text: #0369a1;
+
+      /* Typography */
+      --font-display: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+
+      /* Text Hierarchy */
+      --text-primary: #0f172a;         /* Slate 900 */
+      --text-secondary: #475569;       /* Slate 600 */
+      --text-muted: #64748b;           /* Slate 500 */
+      --text-inverse: #ffffff;
+
+      /* Shadows & Radii */
+      --radius-sm: 8px;
+      --radius-md: 12px;
+      --radius-lg: 16px;
+      --radius-xl: 24px;
+      --radius-pill: 9999px;
+      
+      --shadow-sm: 0 1px 3px rgba(15, 23, 42, 0.06), 0 1px 2px rgba(15, 23, 42, 0.04);
+      --shadow-md: 0 6px 20px -2px rgba(15, 23, 42, 0.08), 0 2px 6px -1px rgba(15, 23, 42, 0.04);
+      --shadow-lg: 0 20px 40px -8px rgba(15, 23, 42, 0.12), 0 4px 12px -2px rgba(15, 23, 42, 0.04);
+      --shadow-3d: 0 25px 50px -12px rgba(15, 23, 42, 0.25), 0 0 30px rgba(79, 70, 229, 0.2);
+
+      --transition-fast: 150ms cubic-bezier(0.16, 1, 0.3, 1);
+      --transition-normal: 280ms cubic-bezier(0.16, 1, 0.3, 1);
+      --transition-spring: 500ms cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    /* ==========================================================================
+       GLOBAL RESETS & AMBIENT CANVAS
+       ========================================================================== */
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      min-height: 100vh;
+      background-color: var(--bg-base);
+      color: var(--text-primary);
+      font-family: var(--font-display);
+      line-height: 1.5;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      overflow-x: hidden;
+      position: relative;
+      padding-bottom: 80px;
+    }
+
+    /* Confetti Canvas */
+    #confettiCanvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      pointer-events: none;
+      z-index: 999;
+    }
+
+    /* ==========================================================================
+       BLUE-SILVER SHINING LIGHT WAVE (SWEEPS EVERY 4 SECONDS WITH BOX HIGHLIGHTING)
+       ========================================================================== */
+    .screen-light-wave {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      pointer-events: none;
+      z-index: 10;
+      overflow: hidden;
+    }
+
+    .screen-light-wave::after {
+      content: "";
+      position: absolute;
+      top: -70%;
+      left: -150%;
+      width: 38%;
+      height: 240%;
+      background: linear-gradient(
+        90deg,
+        transparent 0%,
+        rgba(56, 189, 248, 0.04) 15%,
+        rgba(186, 230, 253, 0.22) 36%,
+        rgba(255, 255, 255, 0.55) 50%,
+        rgba(224, 242, 254, 0.28) 64%,
+        rgba(99, 102, 241, 0.08) 85%,
+        transparent 100%
+      );
+      transform: rotate(26deg);
+      filter: blur(14px);
+      animation: sweepingBlueSilverWave 4s cubic-bezier(0.25, 0.1, 0.25, 1) infinite;
+    }
+
+    @keyframes sweepingBlueSilverWave {
+      0% {
+        left: -150%;
+        opacity: 0;
+      }
+      12% {
+        opacity: 0.85;
+      }
+      50% {
+        opacity: 1;
+      }
+      88% {
+        opacity: 0.85;
+      }
+      100% {
+        left: 250%;
+        opacity: 0;
+      }
+    }
+
+    /* Ambient Soft Pastel Watercolor Glows */
+    .ambient-canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      pointer-events: none;
+      z-index: 0;
+      overflow: hidden;
+    }
+
+    .ambient-orb {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(100px);
+      opacity: 0.45;
+      will-change: transform;
+    }
+
+    .orb-1 {
+      width: 650px;
+      height: 650px;
+      background: radial-gradient(circle, #e0e7ff 0%, #c7d2fe 70%, transparent 100%);
+      top: -160px;
+      left: -120px;
+      animation: driftOne 24s ease-in-out infinite alternate;
+    }
+
+    .orb-2 {
+      width: 580px;
+      height: 580px;
+      background: radial-gradient(circle, #fce7f3 0%, #ede9fe 70%, transparent 100%);
+      bottom: -160px;
+      right: -120px;
+      animation: driftTwo 28s ease-in-out infinite alternate;
+    }
+
+    .orb-3 {
+      width: 480px;
+      height: 480px;
+      background: radial-gradient(circle, #ccfbf1 0%, #e0f2fe 70%, transparent 100%);
+      top: 35%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      animation: driftThree 20s ease-in-out infinite alternate;
+      opacity: 0.35;
+    }
+
+    @keyframes driftOne {
+      0% { transform: translate(0, 0) scale(1); }
+      50% { transform: translate(100px, 60px) scale(1.1); }
+      100% { transform: translate(30px, 120px) scale(0.95); }
+    }
+
+    @keyframes driftTwo {
+      0% { transform: translate(0, 0) scale(1); }
+      50% { transform: translate(-80px, -70px) scale(1.08); }
+      100% { transform: translate(-30px, -140px) scale(1.02); }
+    }
+
+    @keyframes driftThree {
+      0% { transform: translate(-50%, -50%) scale(0.95); }
+      100% { transform: translate(-42%, -42%) scale(1.15); }
+    }
+
+    /* ==========================================================================
+       CONTAINER & APP HEADER (WITH BESPOKE PROFESSIONAL LOGO)
+       ========================================================================== */
+    .app-container {
+      position: relative;
+      z-index: 1;
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 28px 24px;
+    }
+
+    .header-nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px 24px;
+      background: rgba(255, 255, 255, 0.92);
+      backdrop-filter: var(--glass-blur);
+      -webkit-backdrop-filter: var(--glass-blur);
+      border: 1px solid rgba(226, 232, 240, 0.9);
+      border-radius: var(--radius-lg);
+      margin-bottom: 28px;
+      box-shadow: 0 4px 16px -2px rgba(15, 23, 42, 0.05);
+      animation: fadeInDown 0.6s ease-out;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* Blue-silver highlight sheen across header */
+    .header-nav::after {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, #38bdf8 0%, #818cf8 50%, #c084fc 100%);
+    }
+
+    @keyframes fadeInDown {
+      from { opacity: 0; transform: translateY(-16px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .brand-logo {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      text-decoration: none;
+      color: var(--text-primary);
+    }
+
+    .logo-badge-container {
+      position: relative;
+      width: 44px;
+      height: 44px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: transform var(--transition-spring);
+    }
+
+    .brand-logo:hover .logo-badge-container {
+      transform: scale(1.08) rotate(3deg);
+    }
+
+    .brand-svg-logo {
+      width: 100%;
+      height: 100%;
+      display: block;
+      filter: drop-shadow(0 4px 10px rgba(56, 189, 248, 0.35));
+    }
+
+    .brand-text-block {
+      display: flex;
+      flex-direction: column;
+      gap: 1px;
+    }
+
+    .brand-title {
+      font-size: 1.25rem;
+      font-weight: 900;
+      letter-spacing: -0.03em;
+      color: #0f172a;
+      line-height: 1.15;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .brand-title .brand-accent {
+      background: linear-gradient(135deg, #4f46e5 0%, #0284c7 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .brand-subtext {
+      font-size: 0.73rem;
+      font-family: var(--font-mono);
+      font-weight: 700;
+      color: #64748b;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .brand-tag {
+      font-size: 0.72rem;
+      font-family: var(--font-mono);
+      background: linear-gradient(135deg, #eef2ff 0%, #f0f9ff 100%);
+      border: 1px solid #c7d2fe;
+      color: #4338ca;
+      padding: 3px 10px;
+      border-radius: var(--radius-pill);
+      font-weight: 800;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      box-shadow: 0 1px 3px rgba(79, 70, 229, 0.08);
+    }
+
+    .brand-tag .live-dot {
+      width: 6px;
+      height: 6px;
+      background: #10b981;
+      border-radius: 50%;
+      box-shadow: 0 0 6px #10b981;
+    }
+
+    .roadmap-trigger-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 14px;
+      background: #ecfdf5;
+      border: 1px solid #a7f3d0;
+      color: #065f46;
+      border-radius: var(--radius-pill);
+      font-size: 0.82rem;
+      font-weight: 700;
+      text-decoration: none;
+      transition: var(--transition-fast);
+      cursor: pointer;
+    }
+
+    .roadmap-trigger-badge:hover {
+      background: #d1fae5;
+      transform: translateY(-1px);
+      box-shadow: 0 2px 8px rgba(5, 150, 105, 0.15);
+    }
+
+    /* ==========================================================================
+       HERO BANNER WITH 3D JOB-READY SOFTWARE OFFICE SHOWCASE
+       ========================================================================== */
+    .hero-banner {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 32px;
+      align-items: center;
+      margin-bottom: 40px;
+      padding: 12px 4px;
+    }
+
+    @media (min-width: 992px) {
+      .hero-banner {
+        grid-template-columns: 1.15fr 0.85fr;
+        gap: 40px;
+      }
+    }
+
+    .hero-content {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      text-align: left;
+      animation: fadeInLeft 0.7s ease-out;
+    }
+
+    @keyframes fadeInLeft {
+      from { opacity: 0; transform: translateX(-20px); }
+      to { opacity: 1; transform: translateX(0); }
+    }
+
+    .hero-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 16px;
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
+      border-radius: var(--radius-pill);
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: #334155;
+      margin-bottom: 18px;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .hero-pill .pulse-dot {
+      width: 8px;
+      height: 8px;
+      background-color: var(--accent-emerald);
+      border-radius: 50%;
+      box-shadow: 0 0 8px var(--accent-emerald);
+      animation: pulseDot 2s infinite;
+    }
+
+    @keyframes pulseDot {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.4; transform: scale(0.85); }
+    }
+
+    .hero-title {
+      font-size: 3rem;
+      font-weight: 900;
+      line-height: 1.15;
+      letter-spacing: -0.035em;
+      margin-bottom: 16px;
+      color: #0f172a;
+    }
+
+    .hero-title .gradient-text {
+      background: linear-gradient(135deg, #4f46e5 0%, #0284c7 50%, #4338ca 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .hero-subtitle {
+      max-width: 580px;
+      font-size: 1.08rem;
+      color: var(--text-secondary);
+      line-height: 1.6;
+      margin-bottom: 24px;
+    }
+
+    .hero-highlights-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .hero-feature-chip {
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
+      padding: 6px 14px;
+      border-radius: var(--radius-pill);
+      font-size: 0.82rem;
+      font-weight: 700;
+      color: #334155;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      box-shadow: var(--shadow-sm);
+      transition: all var(--transition-fast);
+    }
+
+    .hero-feature-chip:hover {
+      border-color: #cbd5e1;
+      transform: translateY(-1px);
+      box-shadow: var(--shadow-md);
+    }
+
+    /* 3D Showcase Card (Software Office & Job-Ready Avatar) */
+    .hero-3d-container {
+      perspective: 1200px;
+      animation: fadeInRight 0.8s ease-out;
+    }
+
+    @keyframes fadeInRight {
+      from { opacity: 0; transform: translateX(20px); }
+      to { opacity: 1; transform: translateX(0); }
+    }
+
+    .hero-3d-card {
+      position: relative;
+      background: linear-gradient(145deg, #090d16 0%, #1e293b 100%);
+      border: 2px solid rgba(255, 255, 255, 0.15);
+      border-radius: var(--radius-xl);
+      padding: 12px;
+      box-shadow: var(--shadow-3d);
+      overflow: hidden;
+      transform-style: preserve-3d;
+      transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.25s ease;
+      cursor: pointer;
+    }
+
+    .hero-3d-card:hover {
+      box-shadow: 0 30px 60px -10px rgba(15, 23, 42, 0.35), 0 0 40px rgba(56, 189, 248, 0.3);
+    }
+
+    .hero-image-wrapper {
+      position: relative;
+      border-radius: calc(var(--radius-xl) - 4px);
+      overflow: hidden;
+      aspect-ratio: 16 / 9;
+      background: #0f172a;
+    }
+
+    .hero-image-wrapper img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      transition: transform 0.6s ease;
+    }
+
+    .hero-3d-card:hover .hero-image-wrapper img {
+      transform: scale(1.03);
+    }
+
+    /* Floating Holographic Badges on 3D Card */
+    .floating-hud-badge {
+      position: absolute;
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-radius: var(--radius-pill);
+      padding: 6px 14px;
+      font-size: 0.76rem;
+      font-weight: 800;
+      font-family: var(--font-display);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+      z-index: 3;
+      pointer-events: none;
+      animation: levitate 3.5s ease-in-out infinite alternate;
+    }
+
+    .hud-badge-top-right {
+      top: 18px;
+      right: 18px;
+      background: rgba(15, 23, 42, 0.88);
+      border: 1px solid rgba(16, 185, 129, 0.5);
+      color: #6ee7b7;
+      animation-delay: 0.2s;
+    }
+
+    .hud-badge-bottom-left {
+      bottom: 18px;
+      left: 18px;
+      background: rgba(15, 23, 42, 0.9);
+      border: 1px solid rgba(99, 102, 241, 0.5);
+      color: #c7d2fe;
+      animation-delay: 1s;
+    }
+
+    .hud-badge-top-left {
+      top: 18px;
+      left: 18px;
+      background: rgba(15, 23, 42, 0.88);
+      border: 1px solid rgba(56, 189, 248, 0.6);
+      color: #7dd3fc;
+      animation-delay: 1.8s;
+    }
+
+    @keyframes levitate {
+      0% { transform: translateY(0px); }
+      100% { transform: translateY(-6px); }
+    }
+
+    /* Gloss Sheen Effect */
+    .hero-image-wrapper::after {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: -150%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(
+        90deg,
+        transparent 0%,
+        rgba(255, 255, 255, 0.15) 50%,
+        transparent 100%
+      );
+      transform: skewX(-20deg);
+      transition: left 0.8s ease;
+    }
+
+    .hero-3d-card:hover .hero-image-wrapper::after {
+      left: 150%;
+    }
+
+    /* ==========================================================================
+       FLOW SECTIONS & STEP PROGRESSION (SHINING BOX HIGHLIGHTS)
+       ========================================================================== */
+    .analyzer-workspace {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 32px;
+    }
+
+    @media (min-width: 1024px) {
+      .analyzer-workspace.has-roadmap {
+        grid-template-columns: minmax(0, 1fr) 380px;
+      }
+    }
+
+    .workspace-main {
+      display: flex;
+      flex-direction: column;
+      gap: 32px;
+    }
+
+    .card-panel {
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-xl);
+      padding: 32px;
+      box-shadow: var(--shadow-md);
+      transition: all var(--transition-normal);
+      position: relative;
+    }
+
+    .step-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 22px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid var(--border-subtle);
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .step-badge-group {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .step-number {
+      width: 32px;
+      height: 32px;
+      background: linear-gradient(135deg, #4f46e5 0%, #0284c7 100%);
+      color: #ffffff;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.95rem;
+      font-weight: 800;
+      font-family: var(--font-mono);
+      box-shadow: 0 2px 8px rgba(79, 70, 229, 0.35);
+      transition: transform var(--transition-spring);
+    }
+
+    .card-panel:hover .step-number {
+      transform: scale(1.1);
+    }
+
+    .step-title {
+      font-size: 1.32rem;
+      font-weight: 800;
+      letter-spacing: -0.01em;
+      color: #0f172a;
+    }
+
+    .step-desc {
+      font-size: 0.9rem;
+      color: var(--text-secondary);
+      width: 100%;
+      margin-top: 4px;
+    }
+
+    /* STEP 1: ROLE SELECTOR */
+    .role-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+      gap: 16px;
+    }
+
+    .role-card {
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
+      border-radius: var(--radius-lg);
+      padding: 20px;
+      cursor: pointer;
+      text-align: left;
+      transition: all var(--transition-spring);
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      position: relative;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .role-card:hover {
+      background: #f8fafc;
+      border-color: #cbd5e1;
+      transform: translateY(-3px);
+      box-shadow: var(--shadow-md);
+    }
+
+    .role-card:active {
+      transform: scale(0.98);
+    }
+
+    .role-card.selected {
+      background: linear-gradient(135deg, #f0f7ff 0%, #ffffff 100%);
+      border: 2px solid #38bdf8;
+      box-shadow: 0 10px 25px -4px rgba(56, 189, 248, 0.25), 0 0 16px rgba(79, 70, 229, 0.12);
+      transform: translateY(-2px);
+    }
+
+    .role-card.selected::after {
+      content: "✓ Active Role";
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      font-size: 0.72rem;
+      font-family: var(--font-mono);
+      font-weight: 800;
+      color: #0369a1;
+      background: #e0f2fe;
+      border: 1px solid #bae6fd;
+      padding: 2px 8px;
+      border-radius: var(--radius-pill);
+      animation: badgePop 0.3s ease-out;
+    }
+
+    @keyframes badgePop {
+      0% { transform: scale(0.7); opacity: 0; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+
+    .role-card-icon {
+      font-size: 1.85rem;
+      margin-bottom: 2px;
+      transition: transform var(--transition-spring);
+    }
+
+    .role-card:hover .role-card-icon {
+      transform: scale(1.15) rotate(4deg);
+    }
+
+    .role-card-title {
+      font-size: 1.12rem;
+      font-weight: 800;
+      color: #0f172a;
+    }
+
+    .role-card-meta {
+      font-size: 0.84rem;
+      color: var(--text-secondary);
+      line-height: 1.45;
+    }
+
+    .role-card-skills-count {
+      font-size: 0.75rem;
+      font-family: var(--font-mono);
+      color: #64748b;
+      margin-top: auto;
+      padding-top: 8px;
+      font-weight: 600;
+    }
+
+    /* STEP 2: SELF-RATING GRID */
+    .skills-rating-container {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .rating-presets-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 12px;
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: var(--radius-md);
+      padding: 12px 18px;
+      font-size: 0.88rem;
+      font-weight: 600;
+      color: #334155;
+    }
+
+    .preset-buttons {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .btn-preset {
+      background: #ffffff;
+      border: 1px solid #cbd5e1;
+      color: #475569;
+      padding: 5px 12px;
+      border-radius: var(--radius-sm);
+      font-size: 0.8rem;
+      font-weight: 700;
+      font-family: var(--font-display);
+      cursor: pointer;
+      transition: all var(--transition-fast);
+      box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
+    }
+
+    .btn-preset:hover {
+      background: #eef2ff;
+      color: #4338ca;
+      border-color: #a5b4fc;
+      transform: translateY(-1px);
+    }
+
+    .skill-rating-row {
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
+      border-radius: var(--radius-lg);
+      padding: 20px;
+      box-shadow: var(--shadow-sm);
+      transition: all var(--transition-normal);
+    }
+
+    .skill-rating-row:hover {
+      border-color: #cbd5e1;
+      box-shadow: var(--shadow-md);
+    }
+
+    .skill-info-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 14px;
+      flex-wrap: wrap;
+    }
+
+    .skill-title-block {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .skill-name-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .skill-name {
+      font-size: 1.08rem;
+      font-weight: 800;
+      color: #0f172a;
+    }
+
+    .badge-weight {
+      font-size: 0.7rem;
+      font-family: var(--font-mono);
+      font-weight: 800;
+      padding: 2px 8px;
+      border-radius: var(--radius-pill);
+      letter-spacing: 0.04em;
+    }
+
+    .badge-weight.core {
+      background: var(--badge-core-bg);
+      border: 1px solid var(--badge-core-border);
+      color: var(--badge-core-text);
+    }
+
+    .badge-weight.important {
+      background: var(--badge-imp-bg);
+      border: 1px solid var(--badge-imp-border);
+      color: var(--badge-imp-text);
+    }
+
+    .badge-weight.nice {
+      background: var(--badge-nice-bg);
+      border: 1px solid var(--badge-nice-border);
+      color: var(--badge-nice-text);
+    }
+
+    .skill-target-req {
+      font-size: 0.84rem;
+      color: var(--text-muted);
+      font-family: var(--font-display);
+    }
+
+    .skill-target-req span {
+      color: #0284c7;
+      font-weight: 700;
+      font-family: var(--font-mono);
+    }
+
+    .rating-value-pill {
+      font-family: var(--font-mono);
+      font-size: 0.85rem;
+      font-weight: 700;
+      padding: 4px 14px;
+      border-radius: var(--radius-pill);
+      background: #f1f5f9;
+      border: 1px solid #cbd5e1;
+      color: #334155;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      min-width: 140px;
+      justify-content: center;
+      transition: all var(--transition-fast);
+    }
+
+    .rating-value-pill.active-rated {
+      background: #eef2ff;
+      border-color: #c7d2fe;
+      color: #4338ca;
+      font-weight: 800;
+    }
+
+    .rating-value-pill.active-matched {
+      background: #ecfdf5;
+      border-color: #a7f3d0;
+      color: #065f46;
+      font-weight: 800;
+    }
+
+    /* Custom Slider */
+    .slider-wrapper {
+      position: relative;
+      margin-top: 8px;
+    }
+
+    .range-slider {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 100%;
+      height: 8px;
+      border-radius: var(--radius-pill);
+      background: #e2e8f0;
+      outline: none;
+      cursor: pointer;
+      position: relative;
+      z-index: 2;
+      transition: background 0.15s ease-in-out;
+    }
+
+    .range-slider::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      background: #ffffff;
+      border: 3px solid var(--accent-primary);
+      box-shadow: 0 2px 8px rgba(79, 70, 229, 0.4);
+      cursor: pointer;
+      transition: transform var(--transition-fast), box-shadow var(--transition-fast);
+    }
+
+    .range-slider::-moz-range-thumb {
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      background: #ffffff;
+      border: 3px solid var(--accent-primary);
+      box-shadow: 0 2px 8px rgba(79, 70, 229, 0.4);
+      cursor: pointer;
+      transition: transform var(--transition-fast), box-shadow var(--transition-fast);
+    }
+
+    .range-slider:hover::-webkit-slider-thumb {
+      transform: scale(1.18);
+      box-shadow: 0 4px 12px rgba(79, 70, 229, 0.5);
+    }
+
+    .range-slider:active::-webkit-slider-thumb {
+      transform: scale(0.95);
+    }
+
+    .slider-ticks {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 8px;
+      padding: 0 4px;
+    }
+
+    .tick-label {
+      font-size: 0.75rem;
+      font-family: var(--font-mono);
+      color: var(--text-muted);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      cursor: pointer;
+      font-weight: 600;
+      transition: color var(--transition-fast);
+    }
+
+    .tick-label:hover {
+      color: #0f172a;
+    }
+
+    .tick-label.required-level {
+      color: var(--accent-cyan);
+      font-weight: 800;
+    }
+
+    .tick-label.required-level::after {
+      content: "REQ";
+      font-size: 0.62rem;
+      background: #e0f2fe;
+      color: #0284c7;
+      border: 1px solid #bae6fd;
+      padding: 1px 4px;
+      border-radius: 4px;
+      margin-top: 2px;
+      font-weight: 800;
+    }
+
+    /* STEP 3: OPTIONAL EXTRA SKILLS */
+    .extra-skills-box {
+      margin-top: 8px;
+    }
+
+    .extra-skills-input-group {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+
+    .input-text {
+      flex: 1;
+      background: #ffffff;
+      border: 1px solid #cbd5e1;
+      border-radius: var(--radius-md);
+      padding: 12px 16px;
+      color: var(--text-primary);
+      font-family: var(--font-display);
+      font-size: 0.95rem;
+      outline: none;
+      transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+    }
+
+    .input-text:focus {
+      border-color: var(--accent-primary);
+      box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.15);
+    }
+
+    .btn-secondary {
+      background: #f8fafc;
+      border: 1px solid #cbd5e1;
+      color: #334155;
+      padding: 0 20px;
+      border-radius: var(--radius-md);
+      font-weight: 700;
+      cursor: pointer;
+      transition: all var(--transition-fast);
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .btn-secondary:hover {
+      background: #eef2ff;
+      color: #4338ca;
+      border-color: #a5b4fc;
+      transform: translateY(-1px);
+    }
+
+    .extra-chips-container {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      min-height: 32px;
+    }
+
+    .skill-chip {
+      background: #f1f5f9;
+      border: 1px solid #cbd5e1;
+      padding: 4px 12px;
+      border-radius: var(--radius-pill);
+      font-size: 0.82rem;
+      font-weight: 600;
+      color: #334155;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .skill-chip-remove {
+      cursor: pointer;
+      color: var(--text-muted);
+      font-weight: 800;
+      font-size: 0.9rem;
+      transition: color var(--transition-fast);
+    }
+
+    .skill-chip-remove:hover {
+      color: var(--accent-rose);
+    }
+
+    .extra-skills-disclaimer {
+      font-size: 0.82rem;
+      color: var(--text-muted);
+      margin-top: 8px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    /* STEP 4: ANALYZE ACTION CTA (PRIMARY GUIDED PATH) */
+    .analyze-action-bar {
+      margin-top: 12px;
+      display: flex;
+      justify-content: center;
+    }
+
+    .btn-primary-large {
+      background: linear-gradient(135deg, #4f46e5 0%, #0284c7 100%);
+      color: #ffffff;
+      font-size: 1.15rem;
+      font-weight: 800;
+      padding: 16px 42px;
+      border-radius: var(--radius-pill);
+      border: none;
+      cursor: pointer;
+      box-shadow: 0 8px 24px rgba(79, 70, 229, 0.35);
+      transition: all var(--transition-normal);
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .btn-primary-large:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 12px 30px rgba(56, 189, 248, 0.45);
+      background: linear-gradient(135deg, #4338ca 0%, #0369a1 100%);
+    }
+
+    .btn-primary-large:active {
+      transform: scale(0.98);
+    }
+
+    .btn-primary-large:disabled {
+      opacity: 0.7;
+      cursor: not-allowed;
+      transform: none !important;
+    }
+
+    .spinner {
+      width: 20px;
+      height: 20px;
+      border: 2.5px solid rgba(255, 255, 255, 0.4);
+      border-top-color: #ffffff;
+      border-radius: 50%;
+      animation: spin 0.6s linear infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    /* ==========================================================================
+       RESULTS SECTION: COACHING & GAP MATRIX
+       ========================================================================== */
+    .results-section {
+      display: none;
+      flex-direction: column;
+      gap: 28px;
+    }
+
+    .results-section.visible {
+      display: flex;
+    }
+
+    /* Coach Overview Card (High Polish Light Glassmorphic) */
+    .coach-summary-card {
+      background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+      border: 1px solid #cbd5e1;
+      border-radius: var(--radius-xl);
+      padding: 32px;
+      box-shadow: var(--shadow-lg), 0 0 20px rgba(56, 189, 248, 0.1);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .coach-summary-card::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: linear-gradient(90deg, #38bdf8, #818cf8, #059669);
+    }
+
+    .coach-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 24px;
+    }
+
+    @media (min-width: 768px) {
+      .coach-grid {
+        grid-template-columns: 240px 1fr;
+        align-items: center;
+      }
+    }
+
+    .score-dial-block {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 20px;
+      background: #f8fafc;
+      border-radius: var(--radius-lg);
+      border: 1px solid #e2e8f0;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .score-metric-number {
+      font-size: 3.8rem;
+      font-weight: 900;
+      font-family: var(--font-mono);
+      line-height: 1;
+      margin-bottom: 6px;
+      background: linear-gradient(135deg, #1e1b4b 0%, #4338ca 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .score-metric-label {
+      font-size: 0.82rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: #64748b;
+    }
+
+    .score-tier-badge {
+      margin-top: 10px;
+      font-size: 0.76rem;
+      font-family: var(--font-mono);
+      font-weight: 800;
+      padding: 3px 10px;
+      border-radius: var(--radius-pill);
+      text-transform: uppercase;
+    }
+
+    .score-tier-badge.tier-high {
+      background: #ecfdf5;
+      border: 1px solid #a7f3d0;
+      color: #065f46;
+    }
+
+    .score-tier-badge.tier-mid {
+      background: #fffbeb;
+      border: 1px solid #fde68a;
+      color: #92400e;
+    }
+
+    .score-tier-badge.tier-low {
+      background: #fff1f2;
+      border: 1px solid #fecdd3;
+      color: #9f1239;
+    }
+
+    .coach-feedback-block {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .coach-quote-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .coach-avatar {
+      width: 36px;
+      height: 36px;
+      background: linear-gradient(135deg, #0f172a, #1e1b4b);
+      border: 1px solid rgba(56, 189, 248, 0.4);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.1rem;
+      color: #38bdf8;
+      box-shadow: 0 2px 8px rgba(56, 189, 248, 0.25);
+    }
+
+    .coach-name {
+      font-size: 0.98rem;
+      font-weight: 800;
+      color: #0f172a;
+    }
+
+    .coach-narrative {
+      font-size: 1.15rem;
+      font-weight: 600;
+      line-height: 1.45;
+      color: #1e293b;
+    }
+
+    .metrics-rollup-bar {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-top: 8px;
+    }
+
+    .rollup-chip {
+      background: #ffffff;
+      border: 1px solid #cbd5e1;
+      padding: 6px 14px;
+      border-radius: var(--radius-md);
+      font-size: 0.84rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      color: #334155;
+      box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
+    }
+
+    .rollup-chip strong {
+      font-family: var(--font-mono);
+      color: #0f172a;
+      font-weight: 800;
+    }
+
+    /* GAP CATEGORY SECTIONS */
+    .gap-category-group {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .category-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding-bottom: 8px;
+      border-bottom: 1px solid var(--border-subtle);
+    }
+
+    .category-title {
+      font-size: 1.2rem;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: #0f172a;
+    }
+
+    .category-count {
+      font-size: 0.78rem;
+      font-family: var(--font-mono);
+      font-weight: 700;
+      background: #f1f5f9;
+      border: 1px solid #cbd5e1;
+      padding: 2px 10px;
+      border-radius: var(--radius-pill);
+      color: #475569;
+    }
+
+    /* GAP CARDS */
+    .gap-card {
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
+      border-radius: var(--radius-lg);
+      padding: 22px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      box-shadow: var(--shadow-sm);
+      transition: all var(--transition-normal);
+      opacity: 0;
+      transform: translateY(14px);
+    }
+
+    .gap-card.animated-in {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .gap-card:hover {
+      border-color: #cbd5e1;
+      box-shadow: var(--shadow-md);
+    }
+
+    .gap-card.missing {
+      border-left: 5px solid var(--accent-rose);
+    }
+
+    .gap-card.needs-work {
+      border-left: 5px solid var(--accent-amber);
+    }
+
+    .gap-card.matched {
+      border-left: 5px solid var(--accent-emerald);
+      background: #fafdfc;
+    }
+
+    .gap-card-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 14px;
+      flex-wrap: wrap;
+    }
+
+    .gap-card-title-group {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .gap-card-title {
+      font-size: 1.12rem;
+      font-weight: 800;
+      color: #0f172a;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .gap-badges-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .priority-badge {
+      font-size: 0.74rem;
+      font-family: var(--font-mono);
+      font-weight: 800;
+      padding: 2px 8px;
+      border-radius: var(--radius-pill);
+      background: #eef2ff;
+      border: 1px solid #c7d2fe;
+      color: #4338ca;
+    }
+
+    .hours-estimate-pill {
+      font-size: 0.78rem;
+      font-family: var(--font-mono);
+      font-weight: 700;
+      color: #0369a1;
+      background: #f0f9ff;
+      border: 1px solid #bae6fd;
+      padding: 3px 10px;
+      border-radius: var(--radius-pill);
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    /* GAP VISUAL LADDER / BRIDGE METAPHOR */
+    .gap-bridge-container {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      background: #f8fafc;
+      border-radius: var(--radius-md);
+      padding: 12px 16px;
+      border: 1px solid #e2e8f0;
+    }
+
+    .bridge-labels {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.78rem;
+      font-family: var(--font-mono);
+      font-weight: 600;
+      color: var(--text-secondary);
+    }
+
+    .ladder-track {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 6px;
+      height: 12px;
+      align-items: center;
+    }
+
+    .ladder-segment {
+      height: 100%;
+      border-radius: 4px;
+      background: #e2e8f0;
+      position: relative;
+      transition: background 0.3s ease;
+    }
+
+    .ladder-segment.user-filled {
+      background: var(--accent-primary);
+    }
+
+    .ladder-segment.gap-filled {
+      background: repeating-linear-gradient(
+        45deg,
+        rgba(217, 119, 6, 0.2),
+        rgba(217, 119, 6, 0.2) 4px,
+        rgba(217, 119, 6, 0.08) 4px,
+        rgba(217, 119, 6, 0.08) 8px
+      );
+      border: 1px dashed rgba(217, 119, 6, 0.5);
+    }
+
+    .ladder-segment.target-marker::after {
+      content: "";
+      position: absolute;
+      top: -4px;
+      right: -2px;
+      width: 4px;
+      height: 20px;
+      background: var(--accent-cyan);
+      border-radius: 2px;
+      box-shadow: 0 0 6px rgba(2, 132, 199, 0.6);
+      z-index: 2;
+    }
+
+    /* ==========================================================================
+       COURSE RECOMMENDATIONS ROW (WITH GOLD LIGHTING BACKGROUND FOR PAID)
+       ========================================================================== */
+    .course-recommendations-row {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 14px;
+      margin-top: 4px;
+    }
+
+    @media (min-width: 640px) {
+      .course-recommendations-row {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+
+    .course-pill-card {
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
+      border-radius: var(--radius-md);
+      padding: 15px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 12px;
+      box-shadow: var(--shadow-sm);
+      transition: all var(--transition-fast);
+      position: relative;
+    }
+
+    .course-pill-card:hover {
+      border-color: #cbd5e1;
+      box-shadow: var(--shadow-md);
+      transform: translateY(-2px);
+    }
+
+    /* GOLD LIGHTING BACKGROUND FOR PAID COURSES */
+    .course-pill-card.paid-gold-card {
+      background: linear-gradient(135deg, #fffdf2 0%, #fef3c7 45%, #fef9c3 100%);
+      border: 1.5px solid rgba(245, 158, 11, 0.45);
+      box-shadow: 0 6px 20px rgba(245, 158, 11, 0.18), 0 0 16px rgba(251, 191, 36, 0.22);
+      overflow: hidden;
+    }
+
+    .course-pill-card.paid-gold-card::before {
+      content: "";
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: radial-gradient(circle, rgba(254, 240, 138, 0.45) 0%, transparent 60%);
+      pointer-events: none;
+      animation: goldGleamPulse 3.5s ease-in-out infinite alternate;
+    }
+
+    @keyframes goldGleamPulse {
+      0% { transform: scale(0.9) translate(-10px, -10px); opacity: 0.5; }
+      100% { transform: scale(1.1) translate(10px, 10px); opacity: 0.95; }
+    }
+
+    .course-pill-card.paid-gold-card:hover {
+      border-color: #f59e0b;
+      box-shadow: 0 10px 28px rgba(245, 158, 11, 0.3), 0 0 24px rgba(251, 191, 36, 0.4);
+      transform: translateY(-3px);
+    }
+
+    .course-top-info {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+      position: relative;
+      z-index: 2;
+    }
+
+    .course-badge-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+    }
+
+    .course-type-badge {
+      font-size: 0.68rem;
+      font-family: var(--font-mono);
+      font-weight: 800;
+      padding: 2px 8px;
+      border-radius: 4px;
+      letter-spacing: 0.05em;
+    }
+
+    .course-type-badge.free {
+      background: #ecfdf5;
+      border: 1px solid #a7f3d0;
+      color: #065f46;
+    }
+
+    /* GOLD BADGE STYLING */
+    .course-type-badge.paid {
+      background: linear-gradient(135deg, #fef08a 0%, #facc15 100%);
+      border: 1px solid #d97706;
+      color: #78350f;
+      box-shadow: 0 2px 6px rgba(234, 179, 8, 0.35);
+      font-weight: 900;
+    }
+
+    .course-source-tag {
+      font-size: 0.74rem;
+      color: var(--text-muted);
+      font-family: var(--font-mono);
+      font-weight: 600;
+    }
+
+    .paid-gold-card .course-source-tag {
+      color: #92400e;
+      font-weight: 700;
+    }
+
+    .course-link-title {
+      font-size: 0.92rem;
+      font-weight: 700;
+      color: #0f172a;
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      line-height: 1.35;
+      transition: color var(--transition-fast);
+      position: relative;
+      z-index: 2;
+    }
+
+    .course-link-title:hover {
+      color: #2563eb;
+      text-decoration: underline;
+    }
+
+    .paid-gold-card .course-link-title:hover {
+      color: #b45309;
+    }
+
+    .course-link-title .ext-icon {
+      font-size: 0.8rem;
+      color: #64748b;
+    }
+
+    .btn-roadmap-toggle {
+      background: #f8fafc;
+      border: 1px solid #cbd5e1;
+      color: #334155;
+      padding: 7px 14px;
+      border-radius: var(--radius-sm);
+      font-size: 0.78rem;
+      font-weight: 700;
+      font-family: var(--font-display);
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      transition: all var(--transition-fast);
+      width: 100%;
+      position: relative;
+      z-index: 2;
+    }
+
+    .btn-roadmap-toggle:hover {
+      background: #eef2ff;
+      border-color: #a5b4fc;
+      color: #4338ca;
+    }
+
+    .paid-gold-card .btn-roadmap-toggle {
+      background: rgba(255, 255, 255, 0.85);
+      border-color: #fcd34d;
+      color: #854d0e;
+    }
+
+    .paid-gold-card .btn-roadmap-toggle:hover {
+      background: #fef08a;
+      border-color: #f59e0b;
+      color: #713f12;
+    }
+
+    .btn-roadmap-toggle.in-roadmap {
+      background: #ecfdf5;
+      border-color: #a7f3d0;
+      color: #065f46;
+      font-weight: 800;
+    }
+
+    .btn-roadmap-toggle.in-roadmap:hover {
+      background: #fff1f2;
+      border-color: #fecdd3;
+      color: #be123c;
+    }
+
+    /* MATCHED ROW STYLE */
+    .matched-celebration {
+      font-size: 0.88rem;
+      color: #065f46;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: #ecfdf5;
+      padding: 8px 12px;
+      border-radius: var(--radius-sm);
+      border: 1px solid #a7f3d0;
+    }
+
+    /* ==========================================================================
+       SIDEBAR: RETENTION ROADMAP PANEL
+       ========================================================================== */
+    .roadmap-sidebar {
+      display: none;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .roadmap-sidebar.visible {
+      display: flex;
+    }
+
+    .roadmap-panel-card {
+      background: #ffffff;
+      border: 1px solid #cbd5e1;
+      border-radius: var(--radius-xl);
+      padding: 24px;
+      box-shadow: var(--shadow-lg);
+      position: sticky;
+      top: 24px;
+    }
+
+    .roadmap-panel-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 16px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid var(--border-subtle);
+    }
+
+    .roadmap-title {
+      font-size: 1.2rem;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: #0f172a;
+    }
+
+    .roadmap-badge-count {
+      font-family: var(--font-mono);
+      font-size: 0.8rem;
+      background: #ecfdf5;
+      border: 1px solid #a7f3d0;
+      color: #065f46;
+      padding: 2px 10px;
+      border-radius: var(--radius-pill);
+      font-weight: 800;
+    }
+
+    .roadmap-progress-block {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-bottom: 20px;
+    }
+
+    .roadmap-progress-info {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.84rem;
+      font-family: var(--font-mono);
+      font-weight: 700;
+      color: var(--text-secondary);
+    }
+
+    .roadmap-progress-track {
+      width: 100%;
+      height: 8px;
+      background: #e2e8f0;
+      border-radius: var(--radius-pill);
+      overflow: hidden;
+      position: relative;
+    }
+
+    .roadmap-progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #4f46e5, #059669);
+      border-radius: var(--radius-pill);
+      transition: width 0.4s ease;
+    }
+
+    .roadmap-items-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      max-height: 480px;
+      overflow-y: auto;
+      padding-right: 4px;
+    }
+
+    /* Scrollbar styling */
+    .roadmap-items-list::-webkit-scrollbar {
+      width: 5px;
+    }
+    .roadmap-items-list::-webkit-scrollbar-thumb {
+      background: #cbd5e1;
+      border-radius: 4px;
+    }
+
+    .roadmap-item-row {
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: var(--radius-md);
+      padding: 12px;
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      transition: all var(--transition-fast);
+    }
+
+    .roadmap-item-row.is-paid-roadmap {
+      border-left: 3.5px solid #f59e0b;
+      background: #fffdf5;
+    }
+
+    .roadmap-item-row:hover {
+      background: #ffffff;
+      border-color: #cbd5e1;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .roadmap-item-row.is-done {
+      opacity: 0.65;
+      background: #f1f5f9;
+      border-color: #e2e8f0;
+    }
+
+    .roadmap-item-row.is-done .roadmap-item-name {
+      text-decoration: line-through;
+      color: var(--text-muted);
+    }
+
+    .roadmap-checkbox {
+      margin-top: 3px;
+      width: 18px;
+      height: 18px;
+      cursor: pointer;
+      accent-color: var(--accent-emerald);
+    }
+
+    .roadmap-item-details {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+      min-width: 0;
+    }
+
+    .roadmap-item-skill {
+      font-size: 0.72rem;
+      font-family: var(--font-mono);
+      color: #64748b;
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+
+    .roadmap-item-skill.gold-label {
+      color: #b45309;
+      font-weight: 800;
+    }
+
+    .roadmap-item-name {
+      font-size: 0.88rem;
+      font-weight: 700;
+      color: #0f172a;
+      text-decoration: none;
+      word-break: break-word;
+      transition: color var(--transition-fast);
+    }
+
+    .roadmap-item-name:hover {
+      color: #2563eb;
+      text-decoration: underline;
+    }
+
+    .roadmap-item-remove {
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      cursor: pointer;
+      font-size: 1rem;
+      padding: 2px 6px;
+      border-radius: 4px;
+      transition: all var(--transition-fast);
+    }
+
+    .roadmap-item-remove:hover {
+      color: var(--accent-rose);
+      background: #fee2e2;
+    }
+
+    .roadmap-footer-notice {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      margin-top: 16px;
+      padding-top: 12px;
+      border-top: 1px solid var(--border-subtle);
+      line-height: 1.45;
+    }
+
+    /* ==========================================================================
+       RESPONSIVENESS & ACCESSIBILITY
+       ========================================================================== */
+    @media (max-width: 640px) {
+      .app-container {
+        padding: 16px 12px;
+      }
+      .card-panel {
+        padding: 20px 16px;
+      }
+      .hero-title {
+        font-size: 2.1rem;
+      }
+      .score-metric-number {
+        font-size: 3rem;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+      }
+      .ambient-orb {
+        animation: none !important;
+        opacity: 0.2 !important;
+      }
+      .floating-hud-badge,
+      .screen-light-wave::after,
+      .course-pill-card.paid-gold-card::before {
+        animation: none !important;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Ambient Blue-Silver Shining Wave Light Effect (Every 4 Seconds) -->
+  <div class="screen-light-wave" aria-hidden="true"></div>
+
+  <!-- Confetti Celebration Canvas -->
+  <canvas id="confettiCanvas"></canvas>
+
+  <!-- Ambient background motion (Light Watercolor Glows) -->
+  <div class="ambient-canvas" aria-hidden="true">
+    <div class="ambient-orb orb-1"></div>
+    <div class="ambient-orb orb-2"></div>
+    <div class="ambient-orb orb-3"></div>
+  </div>
+
+  <div class="app-container">
+    
+    <!-- Top Navigation with Custom Vector Theme Logo -->
+    <header class="header-nav">
+      <div class="brand-logo">
+        <div class="logo-badge-container">
+          <svg class="brand-svg-logo" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="AI Career Copilot Logo">
+            <defs>
+              <linearGradient id="logoBgGrad" x1="6" y1="6" x2="42" y2="42" gradientUnits="userSpaceOnUse">
+                <stop offset="0%" stop-color="#0b1220"/>
+                <stop offset="50%" stop-color="#111827"/>
+                <stop offset="100%" stop-color="#0f172a"/>
+              </linearGradient>
+              <linearGradient id="logoRingGrad" x1="8" y1="6" x2="40" y2="42" gradientUnits="userSpaceOnUse">
+                <stop offset="0%" stop-color="#7dd3fc"/>
+                <stop offset="45%" stop-color="#c4b5fd"/>
+                <stop offset="100%" stop-color="#4f46e5"/>
+              </linearGradient>
+              <linearGradient id="letterGrad" x1="14" y1="12" x2="30" y2="32" gradientUnits="userSpaceOnUse">
+                <stop offset="0%" stop-color="#e0f2fe"/>
+                <stop offset="30%" stop-color="#a5b4fc"/>
+                <stop offset="100%" stop-color="#7dd3fc"/>
+              </linearGradient>
+              <linearGradient id="orbitGrad" x1="18" y1="18" x2="36" y2="32" gradientUnits="userSpaceOnUse">
+                <stop offset="0%" stop-color="#f8fafc"/>
+                <stop offset="100%" stop-color="#38bdf8"/>
+              </linearGradient>
+            </defs>
+
+            <rect x="3" y="3" width="42" height="42" rx="14" fill="url(#logoBgGrad)"/>
+            <rect x="4.5" y="4.5" width="39" height="39" rx="12.5" stroke="url(#logoRingGrad)" stroke-width="1.5" fill="none" opacity="0.9"/>
+
+            <path d="M15 31.5L23.5 13.5L32 31.5" stroke="url(#letterGrad)" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M18.5 24.5H28.3" stroke="url(#letterGrad)" stroke-width="2.8" stroke-linecap="round"/>
+
+            <path d="M31.5 18C35 20.3 36.2 25 34.4 29.2C32.7 33.4 28.4 36 23.8 35.7" stroke="url(#orbitGrad)" stroke-width="2.4" stroke-linecap="round" fill="none" opacity="0.95"/>
+            <circle cx="33.6" cy="16.8" r="2.2" fill="#f8fafc"/>
+            <circle cx="33.6" cy="16.8" r="0.9" fill="#38bdf8"/>
+          </svg>
+        </div>
+        
+        <div class="brand-text-block">
+          <div class="brand-title">
+            <span>AI Career</span>
+            <span class="brand-accent">Copilot</span>
+          </div>
+          <span class="brand-subtext">Skill-Gap & Roadmap Matrix</span>
+        </div>
+
+        <span class="brand-tag">
+          <span class="live-dot"></span>
+          <span>v2.4 Pro</span>
+        </span>
+      </div>
+
+      <div class="header-actions">
+        <button id="navRoadmapTrigger" class="roadmap-trigger-badge" style="display: none;" onclick="scrollToRoadmap()">
+          <span>🗺️ Roadmap</span>
+          <span id="navRoadmapCount">(0)</span>
+        </button>
+      </div>
+    </header>
+
+    <!-- Hero Banner with 3D Job-Ready Software Workspace Showcase -->
+    <section class="hero-banner">
+      
+      <!-- Left Column: Copy & Live Readiness Highlights -->
+      <div class="hero-content">
+        <div class="hero-pill">
+          <span class="pulse-dot"></span>
+          <span>Precision Career Readiness Benchmarking</span>
+        </div>
+        <h1 class="hero-title">
+          Discover Your <span class="gradient-text">Skill Gaps</span>.<br>
+          Accelerate Your Target Role.
+        </h1>
+        <p class="hero-subtitle">
+          Benchmark your proficiencies against production expectations, bridge gaps with verified courses, and sync your personalized career roadmap.
+        </p>
+
+        <div class="hero-highlights-row">
+          <div class="hero-feature-chip">🚀 6 In-Demand Roles</div>
+          <div class="hero-feature-chip">🎯 Weighted Math Model</div>
+          <div class="hero-feature-chip">💼 Verified Course Paths</div>
+          <div class="hero-feature-chip">🗺️ In-Memory Roadmap</div>
+        </div>
+      </div>
+
+      <!-- Right Column: 3D Interactive Software Office & Job-Ready Avatar Showcase -->
+      <div class="hero-3d-container">
+        <div class="hero-3d-card" id="hero3DCard">
+          
+          <!-- Floating 3D Holographic Badges -->
+          <div class="floating-hud-badge hud-badge-top-left">
+            <span>✨</span>
+            <span>AI Career Alignment</span>
+          </div>
+
+          <div class="floating-hud-badge hud-badge-top-right">
+            <span>🟢</span>
+            <span>Job-Ready Index: 98%</span>
+          </div>
+
+          <div class="floating-hud-badge hud-badge-bottom-left">
+            <span>🏢</span>
+            <span>Modern Software Office</span>
+          </div>
+
+          <div class="hero-image-wrapper">
+            <img src="./hero-job-ready.jpg" alt="3D Job-Ready Software Engineer in Modern Software Office with holographic career metrics" id="heroImage3D">
+          </div>
+
+        </div>
+      </div>
+
+    </section>
+
+    <!-- Main Workspace -->
+    <main class="analyzer-workspace" id="analyzerWorkspace">
+      
+      <div class="workspace-main">
+        
+        <!-- STEP 1: ROLE SELECTOR -->
+        <section class="card-panel" id="roleSelectionPanel">
+          <div class="step-header">
+            <div class="step-badge-group">
+              <span class="step-number">1</span>
+              <h2 class="step-title">Select Your Target Role</h2>
+            </div>
+            <p class="step-desc">Pick the career path you are targeting to load its real-world proficiency requirements.</p>
+          </div>
+
+          <div class="role-grid" id="rolesGrid">
+            <!-- Dynamically populated roles -->
+          </div>
+        </section>
+
+        <!-- STEP 2 & 3: SELF RATING & EXTRA SKILLS -->
+        <section class="card-panel" id="selfRatingPanel" style="display: none;">
+          <div class="step-header">
+            <div class="step-badge-group">
+              <span class="step-number">2</span>
+              <h2 class="step-title">Rate Your Current Proficiency</h2>
+            </div>
+            <p class="step-desc">
+              Slide to honestly rate your experience for each skill (0 = Never Used, 5 = Production Expert).
+            </p>
+          </div>
+
+          <!-- Quick Presets -->
+          <div class="rating-presets-bar">
+            <span>Quick calibrate all skills:</span>
+            <div class="preset-buttons">
+              <button class="btn-preset" onclick="applyPreset(0)">All 0 (Beginner)</button>
+              <button class="btn-preset" onclick="applyPreset(1)">All 1 (Novice)</button>
+              <button class="btn-preset" onclick="applyPreset(3)">All 3 (Working Pro)</button>
+              <button class="btn-preset" onclick="matchAllRequired()">Match Requirements</button>
+            </div>
+          </div>
+
+          <div class="skills-rating-container" id="skillsRatingList" style="margin-top: 16px;">
+            <!-- Dynamically populated skill sliders -->
+          </div>
+
+          <!-- Step 3: Optional Extra Skills -->
+          <div style="margin-top: 32px; padding-top: 24px; border-top: 1px solid var(--border-subtle);">
+            <div class="step-header" style="margin-bottom: 12px; border-bottom: none; padding-bottom: 0;">
+              <div class="step-badge-group">
+                <span class="step-number" style="background: linear-gradient(135deg, #64748b, #475569);">3</span>
+                <h3 class="step-title" style="font-size: 1.15rem;">Optional Extra Skills</h3>
+              </div>
+              <p class="step-desc">
+                Have auxiliary skills outside the core role matrix? Track them on your profile here.
+              </p>
+            </div>
+
+            <div class="extra-skills-box">
+              <div class="extra-skills-input-group">
+                <input type="text" id="extraSkillInput" class="input-text" placeholder="e.g. GraphQL, Rust, Public Speaking, Kubernetes..." onkeydown="handleExtraSkillKey(event)">
+                <button class="btn-secondary" onclick="addExtraSkill()">+ Add Skill</button>
+              </div>
+              
+              <div class="extra-chips-container" id="extraSkillsList">
+                <!-- Dynamically added skill chips -->
+              </div>
+              
+              <p class="extra-skills-disclaimer">
+                <span>ℹ️</span> Note: Extra skills are saved to your profile note but excluded from the role match score calculation to maintain benchmark ground truth.
+              </p>
+            </div>
+          </div>
+
+          <!-- Step 4: Analyze Action CTA -->
+          <div class="analyze-action-bar" style="margin-top: 32px;">
+            <button id="btnAnalyze" class="btn-primary-large" onclick="analyzeGaps()">
+              <span id="btnAnalyzeIcon">⚡</span>
+              <span id="btnAnalyzeText">Analyze Skill Gaps</span>
+            </button>
+          </div>
+        </section>
+
+        <!-- RESULTS SECTION -->
+        <section class="results-section" id="resultsSection">
+          
+          <!-- Coach Summary Card -->
+          <div class="coach-summary-card">
+            <div class="coach-grid">
+              
+              <div class="score-dial-block">
+                <div class="score-metric-number" id="matchScoreDisplay">0%</div>
+                <div class="score-metric-label">Weighted Role Match</div>
+                <div class="score-tier-badge" id="scoreTierBadge">Calculating</div>
+              </div>
+
+              <div class="coach-feedback-block">
+                <div class="coach-quote-header">
+                  <div class="coach-avatar">🤖</div>
+                  <div>
+                    <div class="coach-name">AI Career Coach Diagnostic</div>
+                    <div style="font-size: 0.78rem; color: var(--text-muted); font-weight: 600;" id="coachTargetRoleLabel">Role Analysis</div>
+                  </div>
+                </div>
+
+                <p class="coach-narrative" id="coachNarrativeText">
+                  Analyzing your proficiency breakdown...
+                </p>
+
+                <div class="metrics-rollup-bar">
+                  <div class="rollup-chip">
+                    <span>⏱️ Total Effort to Close:</span>
+                    <strong id="rollupTotalHours">~0h</strong>
+                  </div>
+                  <div class="rollup-chip">
+                    <span>🚨 Missing:</span>
+                    <strong id="rollupMissingCount">0</strong>
+                  </div>
+                  <div class="rollup-chip">
+                    <span>⚡ Needs Work:</span>
+                    <strong id="rollupNeedsWorkCount">0</strong>
+                  </div>
+                  <div class="rollup-chip">
+                    <span>✅ Matched:</span>
+                    <strong id="rollupMatchedCount">0</strong>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+          </div>
+
+          <!-- Ranked Gap Categories -->
+          <div id="gapCategoriesContainer" style="display: flex; flex-direction: column; gap: 32px;">
+            <!-- Category groups (Missing, Needs-work, Matched) populated here -->
+          </div>
+
+        </section>
+
+      </div>
+
+      <!-- SIDEBAR: YOUR ROADMAP -->
+      <aside class="roadmap-sidebar" id="roadmapSidebar">
+        <div class="roadmap-panel-card">
+          <div class="roadmap-panel-header">
+            <h3 class="roadmap-title">
+              <span>🗺️</span>
+              <span>Your Roadmap</span>
+            </h3>
+            <span class="roadmap-badge-count" id="roadmapCountBadge">0 items</span>
+          </div>
+
+          <div class="roadmap-progress-block">
+            <div class="roadmap-progress-info">
+              <span id="roadmapProgressText">0 of 0 complete (0%)</span>
+              <span id="roadmapHoursLeft">~0h left</span>
+            </div>
+            <div class="roadmap-progress-track">
+              <div class="roadmap-progress-fill" id="roadmapProgressFill" style="width: 0%;"></div>
+            </div>
+          </div>
+
+          <div class="roadmap-items-list" id="roadmapItemsContainer">
+            <!-- Dynamic roadmap items -->
+          </div>
+
+          <div class="roadmap-footer-notice">
+            <span>💡 <em>Prototype Session State:</em> Roadmap changes are actively tracked in memory. Hooking up user authentication in production syncs this roadmap to your persistent database profile.</span>
+          </div>
+        </div>
+      </aside>
+
+    </main>
+
+  </div>
+
+  <!-- ==========================================================================
+       JAVASCRIPT LOGIC & STATE ENGINE
+       ========================================================================== */
+  -->
+  <script>
+    /* ==========================================================================
+       1. DATASET: 6 REALISTIC TECH ROLES & CURATED RESOURCES
+       ========================================================================== */
+    const ROLES_DATA = [
+      {
+        id: "frontend-dev",
+        label: "Frontend Developer",
+        icon: "💻",
+        description: "Build high-performance web applications, fluid user interfaces, and accessible design systems.",
+        skills: [
+          {
+            id: "js-ts",
+            name: "Modern JavaScript & TypeScript",
+            level: 4,
+            weight: 2,
+            categoryLabel: "CORE",
+            description: "ES6+, async concurrency, strict typing, generics, closures, and DOM event model."
+          },
+          {
+            id: "react-next",
+            name: "React 19 & Next.js App Router",
+            level: 4,
+            weight: 2,
+            categoryLabel: "CORE",
+            description: "Server Components, hooks, state hydration, routing patterns, and component lifecycle."
+          },
+          {
+            id: "css-tailwind",
+            name: "Modern CSS & Tailwind Architecture",
+            level: 3,
+            weight: 1.5,
+            categoryLabel: "IMPORTANT",
+            description: "CSS Grid, Flexbox, responsive layouts, utility-first CSS, and CSS custom variables."
+          },
+          {
+            id: "web-perf",
+            name: "Web Performance & Core Web Vitals",
+            level: 3,
+            weight: 1.5,
+            categoryLabel: "IMPORTANT",
+            description: "LCP/INP/CLS optimization, bundle splitting, lazy loading, caching headers, and rendering metrics."
+          },
+          {
+            id: "state-mgmt",
+            name: "State Management (Zustand / TanStack)",
+            level: 3,
+            weight: 1.5,
+            categoryLabel: "IMPORTANT",
+            description: "Server state caching, optimistic updates, global store patterns, and synchronization."
+          },
+          {
+            id: "testing-fe",
+            name: "Automated Testing (Vitest & Playwright)",
+            level: 3,
+            weight: 1.5,
+            categoryLabel: "IMPORTANT",
+            description: "Unit testing components, mock server handlers (MSW), and End-to-End browser test flows."
+          },
+          {
+            id: "browser-apis",
+            name: "Browser APIs & Web Security",
+            level: 2,
+            weight: 1,
+            categoryLabel: "NICE-TO-HAVE",
+            description: "Web Workers, LocalStorage/IndexedDB, CORS, CSP policies, and XSS sanitization."
+          }
+        ]
+      },
+      {
+        id: "backend-dev",
+        label: "Backend Developer",
+        icon: "⚙️",
+        description: "Architect scalable server architectures, resilient APIs, database schemas, and microservices.",
+        skills: [
+          {
+            id: "server-runtime",
+            name: "Server Runtimes (Node.js / Go / Python)",
+            level: 4,
+            weight: 2,
+            categoryLabel: "CORE",
+            description: "Event-loop concurrency, goroutines/async IO, memory management, and process architecture."
+          },
+          {
+            id: "api-design",
+            name: "REST, GraphQL & gRPC API Design",
+            level: 4,
+            weight: 2,
+            categoryLabel: "CORE",
+            description: "Contract-first schemas, idempotency, versioning, pagination, and error payload standards."
+          },
+          {
+            id: "sql-postgres",
+            name: "PostgreSQL & Database Optimization",
+            level: 4,
+            weight: 2,
+            categoryLabel: "CORE",
+            description: "Relational schema design, indexes, ACID transactions, query plans (EXPLAIN ANALYZE), and locks."
+          },
+          {
+            id: "caching-redis",
+            name: "Redis & Distributed Caching",
+            level: 3,
+            weight: 1.5,
+            categoryLabel: "IMPORTANT",
+            description: "Cache-aside strategies, cache invalidation, rate limiting, and pub/sub messaging patterns."
+          },
+          {
+            id: "microservices-msg",
+            name: "Microservices & Message Queues (Kafka/RabbitMQ)",
+            level: 3,
+            weight: 1.5,
+            categoryLabel: "IMPORTANT",
+            description: "Event-driven architecture, consumer lag, at-least-once delivery, and service mesh basics."
+          },
+          {
+            id: "auth-security",
+            name: "Authentication (OAuth2/JWT) & Security",
+            level: 3,
+            weight: 1.5,
+            categoryLabel: "IMPORTANT",
+            description: "RBAC, JWT token rotation, bcrypt hashing, SQL injection prevention, and OWASP Top 10."
+          },
+          {
+            id: "docker-dev",
+            name: "Docker & Containerized Workflows",
+            level: 3,
+            weight: 1,
+            categoryLabel: "NICE-TO-HAVE",
+            description: "Multi-stage Docker builds, docker-compose orchestration, and container networking."
+          }
+        ]
+      },
+      {
+        id: "devops-engineer",
+        label: "DevOps & Cloud Architect",
+        icon: "☁️",
+        description: "Automate infrastructure, maintain high availability cloud clusters, CI/CD, and telemetry.",
+        skills: [
+          {
+            id: "linux-shell",
+            name: "Linux Administration & Shell Scripting",
+            level: 4,
+            weight: 2,
+            categoryLabel: "CORE",
+            description: "Systemd, kernel signals, bash automation, filesystem permissions, and network debugging."
+          },
+          {
+            id: "docker-k8s",
+            name: "Kubernetes & Container Orchestration",
+            level: 4,
+            weight: 2,
+            categoryLabel: "CORE",
+            description: "Pods, Deployments, Services, Ingress controllers, Helm charts, and cluster autoscaling."
+          },
+          {
+            id: "terraform-iac",
+            name: "Terraform & Infrastructure as Code",
+            level: 4,
+            weight: 2,
+            categoryLabel: "CORE",
+            description: "Declarative cloud provisioning, state management, modules, and multi-environment drift detection."
+          },
+          {
+            id: "cloud-providers",
+            name: "Cloud Architecture (AWS / GCP)",
+            level: 4,
+            weight: 2,
+            categoryLabel: "CORE",
+            description: "VPC networking, IAM zero-trust, serverless compute, managed databases, and cloud security."
+          },
+          {
+            id: "cicd-pipelines",
+            name: "CI/CD Pipelines (GitHub Actions / GitLab)",
+            level: 3,
+            weight: 1.5,
+            categoryLabel: "IMPORTANT",
+            description: "Automated test runs, build matrix caching, canary rollouts, and artifact registry security."
+          },
+          {
+            id: "observability",
+            name: "Observability (Prometheus & Grafana)",
+            level: 3,
+            weight: 1.5,
+            categoryLabel: "IMPORTANT",
+            description: "Metrics scraping, alertmanager rule triggers, distributed tracing (OpenTelemetry), and log aggregation."
+          },
+          {
+            id: "cloud-sec-comp",
+            name: "Cloud Security & Secrets Management",
+            level: 2,
+            weight: 1,
+            categoryLabel: "NICE-TO-HAVE",
+            description: "Vault integration, KMS key rotation, SOC2 audit trails, and container image vulnerability scans."
+          }
+        ]
+      },
+      {
+        id: "data-scientist",
+        label: "Data Scientist & ML Engineer",
+        icon: "📊",
+        description: "Extract deep statistical insights, train machine learning models, and deploy AI pipelines.",
+        skills: [
+          {
+            id: "python-datascience",
+            name: "Python Data Stack (Pandas & NumPy)",
+            level: 4,
+            weight: 2,
+            categoryLabel: "CORE",
+            description: "Vectorized data manipulation, matrix algebra, data cleaning, and statistical transformations."
+          },
+          {
+            id: "machine-learning",
+            name: "Machine Learning (Scikit-Learn)",
+            level: 4,
+            weight: 2,
+            categoryLabel: "CORE",
+            description: "Supervised/unsupervised algorithms, gradient boosting (XGBoost), cross-validation, and hyperparameter tuning."
+          },
+          {
+            id: "sql-analytics",
+            name: "SQL & Data Warehouse Modeling",
+            level: 4,
+            weight: 2,
+            categoryLabel: "CORE",
+            description: "Window functions, star schema modeling, CTEs, cohort analysis, and analytical query performance."
+          },
+          {
+            id: "deep-learning",
+            name: "Deep Learning & Neural Nets (PyTorch)",
+            level: 3,
+            weight: 1.5,
+            categoryLabel: "IMPORTANT",
+            description: "Tensors, backpropagation, CNNs/Transformers architecture, fine-tuning, and GPU training."
+          },
+          {
+            id: "data-visualization",
+            name: "Data Storytelling & Visualization (Plotly/Seaborn)",
+            level: 3,
+            weight: 1.5,
+            categoryLabel: "IMPORTANT",
+            description: "Exploratory data analysis plots, distribution curves, interactive dashboards, and executive reporting."
+          },
+          {
+            id: "feature-engineering",
+            name: "Feature Engineering & Metric Validation",
+            level: 3,
+            weight: 1.5,
+            categoryLabel: "IMPORTANT",
+            description: "Categorical encoding, dimensionality reduction (PCA), ROC-AUC, precision-recall curve analysis."
+          },
+          {
+            id: "mlops-deploy",
+            name: "MLOps & Model Deployment (FastAPI / MLflow)",
+            level: 2,
+            weight: 1,
+            categoryLabel: "NICE-TO-HAVE",
+            description: "Model registry versioning, real-time inference microservice endpoints, and drift monitoring."
+          }
+        ]
+      },
+      {
+        id: "product-manager",
+        label: "Product Manager",
+        icon: "🎯",
+        description: "Drive product vision, prioritize roadmap initiatives, conduct customer discovery, and lead cross-functional delivery.",
+        skills: [
+          {
+            id: "product-strategy",
+            name: "Product Strategy & Roadmapping",
+            level: 4,
+            weight: 2,
+            categoryLabel: "CORE",
+            description: "Vision setting, OKR alignment, market opportunity sizing, positioning, and outcome-driven roadmap planning."
+          },
+          {
+            id: "user-discovery",
+            name: "User Research & Customer Interviews",
+            level: 4,
+            weight: 2,
+            categoryLabel: "CORE",
+            description: "Continuous discovery habits, JTBD framework, user pain point synthesis, and usability testing."
+          },
+          {
+            id: "product-metrics",
+            name: "Product Analytics & North Star KPIs",
+            level: 4,
+            weight: 2,
+            categoryLabel: "CORE",
+            description: "Funnel conversion, retention cohorts, A/B experiment design, statistical significance, and LTV/CAC metrics."
+          },
+          {
+            id: "agile-delivery",
+            name: "Agile Execution & Sprint Management",
+            level: 3,
+            weight: 1.5,
+            categoryLabel: "IMPORTANT",
+            description: "User story mapping, backlog grooming, acceptance criteria definition, and sprint retrospective facilitation."
+          },
+          {
+            id: "tech-fluency",
+            name: "Technical Fluency & System Architecture",
+            level: 3,
+            weight: 1.5,
+            categoryLabel: "IMPORTANT",
+            description: "Understanding REST APIs, database tradeoffs, technical debt evaluation, and engineering collaboration."
+          },
+          {
+            id: "stakeholder-influence",
+            name: "Stakeholder Management & Executive Comms",
+            level: 3,
+            weight: 1.5,
+            categoryLabel: "IMPORTANT",
+            description: "Executive presentation decks, cross-functional alignment, objection handling, and crisis communication."
+          },
+          {
+            id: "rapid-prototyping",
+            name: "Wireframing & UI Spec Prototyping",
+            level: 2,
+            weight: 1,
+            categoryLabel: "NICE-TO-HAVE",
+            description: "Low-fidelity wireframing in Figma/Whimsical, PRD documentation, and user flow diagrams."
+          }
+        ]
+      },
+      {
+        id: "ux-designer",
+        label: "UX/UI Product Designer",
+        icon: "🎨",
+        description: "Craft intuitive user journeys, establish design systems, validate prototypes, and ensure accessibility.",
+        skills: [
+          {
+            id: "figma-systems",
+            name: "Figma Mastery & Design Systems",
+            level: 4,
+            weight: 2,
+            categoryLabel: "CORE",
+            description: "Tokens, Auto-Layout v5, component variants, component properties, and scalable library governance."
+          },
+          {
+            id: "ux-research-design",
+            name: "Usability Testing & UX Research",
+            level: 4,
+            weight: 2,
+            categoryLabel: "CORE",
+            description: "Tree testing, card sorting, unmoderated user tests, heuristic evaluation, and journey mapping."
+          },
+          {
+            id: "visual-design-ui",
+            name: "Visual Hierarchy & Typography",
+            level: 4,
+            weight: 2,
+            categoryLabel: "CORE",
+            description: "Type scales, optical balance, color theory, spacing tokens, and modern visual polish."
+          },
+          {
+            id: "interaction-motion",
+            name: "Interaction Design & Micro-Interactions",
+            level: 3,
+            weight: 1.5,
+            categoryLabel: "IMPORTANT",
+            description: "State transitions, animated affordances, tactile feedback, and interactive prototype flows."
+          },
+          {
+            id: "info-architecture",
+            name: "Information Architecture & User Flows",
+            level: 3,
+            weight: 1.5,
+            categoryLabel: "IMPORTANT",
+            description: "Site maps, navigational hierarchy, mental models, and edge-case error flow mapping."
+          },
+          {
+            id: "accessibility-wcag",
+            name: "Accessibility (WCAG 2.2 AA) & Inclusion",
+            level: 3,
+            weight: 1.5,
+            categoryLabel: "IMPORTANT",
+            description: "Color contrast ratios, keyboard focus rings, screen reader annotations, and tap target sizing."
+          },
+          {
+            id: "design-handoff",
+            name: "Design-to-Dev Handoff & Specs",
+            level: 3,
+            weight: 1,
+            categoryLabel: "NICE-TO-HAVE",
+            description: "Dev Mode documentation, responsive constraint specs, redlines, and asset export optimization."
+          }
+        ]
+      }
+    ];
+
+    /* ==========================================================================
+       2. CURATED RESOURCES REPOSITORY (TIER 1 REAL LINKS + TIER 2 FALLBACKS)
+       ========================================================================== */
+    const CURATED_COURSE_MAP = {
+      "js-ts": {
+        free: {
+          title: "MDN JavaScript Guide & TypeScript Handbook",
+          provider: "MDN / TypeScript Official",
+          url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide"
+        },
+        paid: {
+          title: "Understanding TypeScript & Modern JS Masterclass",
+          provider: "Udemy (Maximilian Schwarzmüller)",
+          url: "https://www.udemy.com/courses/search/?q=understanding+typescript"
+        }
+      },
+      "react-next": {
+        free: {
+          title: "React 19 Official Interactive Tutorial & Next.js Docs",
+          provider: "React.dev / Vercel",
+          url: "https://react.dev/learn"
+        },
+        paid: {
+          title: "Meta Front-End Developer Professional Certificate",
+          provider: "Coursera (Meta)",
+          url: "https://www.coursera.org/professional-certificates/meta-front-end-developer"
+        }
+      },
+      "css-tailwind": {
+        free: {
+          title: "Learn CSS & Responsive Design Guide",
+          provider: "Google Web.dev",
+          url: "https://web.dev/learn/css/"
+        },
+        paid: {
+          title: "Advanced CSS and Sass: Flexbox, Grid & Animations",
+          provider: "Udemy (Jonas Schmedtmann)",
+          url: "https://www.udemy.com/courses/search/?q=advanced+css+and+sass+jonas"
+        }
+      },
+      "web-perf": {
+        free: {
+          title: "Optimize Website Speed & Core Web Vitals",
+          provider: "Google Web.dev / Fast",
+          url: "https://web.dev/fast/"
+        },
+        paid: {
+          title: "Web Performance Fundamentals & Optimization",
+          provider: "Frontend Masters / Coursera",
+          url: "https://www.coursera.org/search?query=web+performance+optimization"
+        }
+      },
+      "state-mgmt": {
+        free: {
+          title: "TanStack Query Official Quickstart & Architecture",
+          provider: "TanStack Docs",
+          url: "https://tanstack.com/query/latest/docs/framework/react/quick-start"
+        },
+        paid: {
+          title: "Modern React with Redux Toolkit & Zustand",
+          provider: "Udemy (Stephen Grider)",
+          url: "https://www.udemy.com/courses/search/?q=react+state+management+zustand+redux"
+        }
+      },
+      "testing-fe": {
+        free: {
+          title: "Playwright Official End-to-End Getting Started Guide",
+          provider: "Playwright.dev (Microsoft)",
+          url: "https://playwright.dev/docs/intro"
+        },
+        paid: {
+          title: "Testing React with Jest and Testing Library",
+          provider: "Udemy (Bonnie Schulkin)",
+          url: "https://www.udemy.com/courses/search/?q=testing+javascript+jest+playwright"
+        }
+      },
+      "browser-apis": {
+        free: {
+          title: "Web Security Fundamentals & Web APIs",
+          provider: "MDN Web Docs",
+          url: "https://developer.mozilla.org/en-US/docs/Web/Security"
+        },
+        paid: {
+          title: "Web Application Security & OWASP Top 10",
+          provider: "Coursera",
+          url: "https://www.coursera.org/search?query=web+security+owasp"
+        }
+      },
+
+      // Backend skills
+      "server-runtime": {
+        free: {
+          title: "Node.js Official Architectural Guides & Go Tour",
+          provider: "Nodejs.org / Go.dev",
+          url: "https://nodejs.org/en/docs/guides"
+        },
+        paid: {
+          title: "NodeJS - The Complete Guide (MVC, REST APIs, GraphQL)",
+          provider: "Udemy (Maximilian Schwarzmüller)",
+          url: "https://www.udemy.com/courses/search/?q=nodejs+complete+guide"
+        }
+      },
+      "api-design": {
+        free: {
+          title: "Microsoft REST API & GraphQL Best Practices Guide",
+          provider: "Microsoft Guidelines",
+          url: "https://github.com/microsoft/api-guidelines"
+        },
+        paid: {
+          title: "API Design and Fundamentals of Google Cloud",
+          provider: "Coursera (Google Cloud)",
+          url: "https://www.coursera.org/learn/api-design"
+        }
+      },
+      "sql-postgres": {
+        free: {
+          title: "PostgreSQL Tutorial & Query Optimization Guide",
+          provider: "PostgreSQLTutorial.com",
+          url: "https://www.postgresqltutorial.com/"
+        },
+        paid: {
+          title: "The Complete SQL Bootcamp: Go from Zero to Hero",
+          provider: "Udemy (Jose Portilla)",
+          url: "https://www.udemy.com/courses/search/?q=complete+sql+postgresql+bootcamp"
+        }
+      },
+      "caching-redis": {
+        free: {
+          title: "Redis University: RU101 Introduction to Redis Data Structures",
+          provider: "Redis.com (Official)",
+          url: "https://university.redis.com/"
+        },
+        paid: {
+          title: "Distributed Caching and High-Throughput Redis Patterns",
+          provider: "Coursera",
+          url: "https://www.coursera.org/search?query=redis+caching+systems"
+        }
+      },
+      "microservices-msg": {
+        free: {
+          title: "Martin Fowler Microservices & Event Architecture Guide",
+          provider: "MartinFowler.com",
+          url: "https://martinfowler.com/articles/microservices.html"
+        },
+        paid: {
+          title: "Microservices with Node JS and React: Event-Driven Architecture",
+          provider: "Udemy (Stephen Grider)",
+          url: "https://www.udemy.com/courses/search/?q=microservices+software+architecture"
+        }
+      },
+      "auth-security": {
+        free: {
+          title: "OAuth 2.0 and OpenID Connect in Plain English",
+          provider: "OAuth.net / Okta Developer",
+          url: "https://oauth.net/2/"
+        },
+        paid: {
+          title: "IBM Cybersecurity Analyst Professional Certificate",
+          provider: "Coursera (IBM)",
+          url: "https://www.coursera.org/professional-certificates/ibm-cybersecurity-analyst"
+        }
+      },
+      "docker-dev": {
+        free: {
+          title: "Docker Official Getting Started & Hands-on Labs",
+          provider: "Docker Docs",
+          url: "https://docs.docker.com/get-started/"
+        },
+        paid: {
+          title: "Docker & Kubernetes: The Practical Guide",
+          provider: "Udemy (Academind)",
+          url: "https://www.udemy.com/courses/search/?q=docker+kubernetes+practical+guide"
+        }
+      },
+
+      // DevOps skills
+      "linux-shell": {
+        free: {
+          title: "Linux Journey: Interactive Command Line & Kernel Paths",
+          provider: "LinuxJourney.com",
+          url: "https://linuxjourney.com/"
+        },
+        paid: {
+          title: "Linux Administration Bootcamp: Go from Beginner to Advanced",
+          provider: "Udemy (Jason Cannon)",
+          url: "https://www.udemy.com/courses/search/?q=linux+administration+bootcamp"
+        }
+      },
+      "docker-k8s": {
+        free: {
+          title: "Kubernetes Official Interactive Scenarios & Docs",
+          provider: "Kubernetes.io (CNCF)",
+          url: "https://kubernetes.io/docs/tutorials/"
+        },
+        paid: {
+          title: "Certified Kubernetes Administrator (CKA) with Practice Tests",
+          provider: "Udemy (Mumshad Mannambeth / KodeKloud)",
+          url: "https://www.udemy.com/courses/search/?q=certified+kubernetes+administrator+cka"
+        }
+      },
+      "terraform-iac": {
+        free: {
+          title: "HashiCorp Terraform Associate Tutorials & Hands-on",
+          provider: "HashiCorp Developer",
+          url: "https://developer.hashicorp.com/terraform/tutorials"
+        },
+        paid: {
+          title: "HashiCorp Certified: Terraform Associate Certification",
+          provider: "Udemy (Zeal Vora)",
+          url: "https://www.udemy.com/courses/search/?q=hashicorp+terraform+associate"
+        }
+      },
+      "cloud-providers": {
+        free: {
+          title: "AWS Skill Builder: Cloud Practitioner Foundation",
+          provider: "AWS Official",
+          url: "https://explore.skillbuilder.aws/"
+        },
+        paid: {
+          title: "Google Cloud Architect Professional Certificate",
+          provider: "Coursera (Google Cloud)",
+          url: "https://www.coursera.org/professional-certificates/google-cloud-architect"
+        }
+      },
+      "cicd-pipelines": {
+        free: {
+          title: "Automate Workflows with GitHub Actions Skills Lab",
+          provider: "GitHub Skills",
+          url: "https://skills.github.com/"
+        },
+        paid: {
+          title: "GitHub Actions - The Complete Guide & CI/CD Pipelines",
+          provider: "Udemy (Maximilian Schwarzmüller)",
+          url: "https://www.udemy.com/courses/search/?q=github+actions+cicd+pipelines"
+        }
+      },
+      "observability": {
+        free: {
+          title: "Prometheus Monitoring & Alerting Overview",
+          provider: "Prometheus.io",
+          url: "https://prometheus.io/docs/introduction/overview/"
+        },
+        paid: {
+          title: "Prometheus and Grafana: The Complete Monitoring Masterclass",
+          provider: "Udemy",
+          url: "https://www.udemy.com/courses/search/?q=prometheus+grafana+monitoring"
+        }
+      },
+      "cloud-sec-comp": {
+        free: {
+          title: "Security Guidance for Critical Areas of Cloud Computing",
+          provider: "Cloud Security Alliance (CSA)",
+          url: "https://cloudsecurityalliance.org/research/guidance/"
+        },
+        paid: {
+          title: "AWS Certified Security - Specialty Certification",
+          provider: "Coursera / Udemy",
+          url: "https://www.coursera.org/search?query=cloud+security+aws"
+        }
+      },
+
+      // Data Science skills
+      "python-datascience": {
+        free: {
+          title: "Kaggle Python, Pandas & NumPy Interactive Courses",
+          provider: "Kaggle Learn",
+          url: "https://www.kaggle.com/learn/pandas"
+        },
+        paid: {
+          title: "IBM Data Science Professional Certificate",
+          provider: "Coursera (IBM)",
+          url: "https://www.coursera.org/professional-certificates/ibm-data-science"
+        }
+      },
+      "machine-learning": {
+        free: {
+          title: "Scikit-Learn Machine Learning Tutorials & Guide",
+          provider: "Scikit-Learn.org",
+          url: "https://scikit-learn.org/stable/tutorial/index.html"
+        },
+        paid: {
+          title: "Machine Learning Specialization by Andrew Ng",
+          provider: "Coursera (DeepLearning.AI / Stanford)",
+          url: "https://www.coursera.org/specializations/machine-learning-introduction"
+        }
+      },
+      "sql-analytics": {
+        free: {
+          title: "Mode Analytics SQL Tutorial for Data Analysis",
+          provider: "Mode.com",
+          url: "https://mode.com/sql-tutorial/"
+        },
+        paid: {
+          title: "Advanced SQL for Data Scientists & Analytics Engineers",
+          provider: "Udemy",
+          url: "https://www.udemy.com/courses/search/?q=advanced+sql+data+science"
+        }
+      },
+      "deep-learning": {
+        free: {
+          title: "Practical Deep Learning for Coders (Fast.ai)",
+          provider: "Fast.ai (Jeremy Howard)",
+          url: "https://course.fast.ai/"
+        },
+        paid: {
+          title: "Deep Learning Specialization (Neural Networks & PyTorch)",
+          provider: "Coursera (DeepLearning.AI)",
+          url: "https://www.coursera.org/specializations/deep-learning"
+        }
+      },
+      "data-visualization": {
+        free: {
+          title: "Kaggle Data Visualization with Seaborn & Plotly",
+          provider: "Kaggle Learn",
+          url: "https://www.kaggle.com/learn/data-visualization"
+        },
+        paid: {
+          title: "Storytelling with Data & Modern Visual Dashboards",
+          provider: "Udemy",
+          url: "https://www.udemy.com/courses/search/?q=data+visualization+storytelling+tableau"
+        }
+      },
+      "feature-engineering": {
+        free: {
+          title: "Google Machine Learning Crash Course: Feature Engineering",
+          provider: "Google Developers",
+          url: "https://developers.google.com/machine-learning/crash-course"
+        },
+        paid: {
+          title: "Feature Engineering for Machine Learning Masterclass",
+          provider: "Udemy (Soledad Galli)",
+          url: "https://www.udemy.com/courses/search/?q=feature+engineering+machine+learning"
+        }
+      },
+      "mlops-deploy": {
+        free: {
+          title: "Made With ML: Production MLOps Course",
+          provider: "MadeWithML.com",
+          url: "https://madewithml.com/"
+        },
+        paid: {
+          title: "Machine Learning Engineering for Production (MLOps)",
+          provider: "Coursera (DeepLearning.AI)",
+          url: "https://www.coursera.org/specializations/machine-learning-engineering-for-production-mlops"
+        }
+      },
+
+      // Product Management skills
+      "product-strategy": {
+        free: {
+          title: "The Ultimate Guide to Product Management & Roadmaps",
+          provider: "Product School",
+          url: "https://productschool.com/blog/product-management-2/the-ultimate-product-management-guide"
+        },
+        paid: {
+          title: "Digital Product Management: Modern Fundamentals",
+          provider: "Coursera (Univ. of Virginia)",
+          url: "https://www.coursera.org/learn/uva-darden-digital-product-management"
+        }
+      },
+      "user-discovery": {
+        free: {
+          title: "Discovery Phase & User Interview Methods",
+          provider: "Nielsen Norman Group",
+          url: "https://www.nngroup.com/articles/discovery-phase/"
+        },
+        paid: {
+          title: "Google UX Design Professional Certificate",
+          provider: "Coursera (Google)",
+          url: "https://www.coursera.org/professional-certificates/google-ux-design"
+        }
+      },
+      "product-metrics": {
+        free: {
+          title: "Amplitude Product Analytics & Retention Playbook",
+          provider: "Amplitude.com",
+          url: "https://amplitude.com/mastering-retention"
+        },
+        paid: {
+          title: "Data-Driven Product Management & Growth Analytics",
+          provider: "Coursera",
+          url: "https://www.coursera.org/search?query=product+analytics+metrics"
+        }
+      },
+      "agile-delivery": {
+        free: {
+          title: "Atlassian Agile Coach & Scrum Sprint Guide",
+          provider: "Atlassian.com",
+          url: "https://www.atlassian.com/agile"
+        },
+        paid: {
+          title: "Agile with Atlassian Jira & Sprint Management",
+          provider: "Coursera (Atlassian)",
+          url: "https://www.coursera.org/learn/agile-atlassian-jira"
+        }
+      },
+      "tech-fluency": {
+        free: {
+          title: "CS50's Computer Science for Business Professionals",
+          provider: "Harvard University (edX/Harvard Online)",
+          url: "https://pll.harvard.edu/course/cs50s-computer-science-business-professionals"
+        },
+        paid: {
+          title: "Technical Product Management Masterclass (APIs & Architecture)",
+          provider: "Udemy",
+          url: "https://www.udemy.com/courses/search/?q=technical+product+management"
+        }
+      },
+      "stakeholder-influence": {
+        free: {
+          title: "Product Leadership & Cross-Functional Influence",
+          provider: "YouTube PM Masterclasses",
+          url: "https://www.youtube.com/results?search_query=stakeholder+management+product+manager+tutorial"
+        },
+        paid: {
+          title: "Strategic Leadership & Influencing for Product Managers",
+          provider: "Coursera",
+          url: "https://www.coursera.org/search?query=stakeholder+management+leadership"
+        }
+      },
+      "rapid-prototyping": {
+        free: {
+          title: "Figma for Beginners: UI Wireframing & Specs",
+          provider: "Figma.com Learn",
+          url: "https://www.figma.com/resource-library/learn-figma/"
+        },
+        paid: {
+          title: "User Experience Design Essentials - Adobe XD & Figma",
+          provider: "Udemy (Daniel Walter Scott)",
+          url: "https://www.udemy.com/courses/search/?q=figma+ui+ux+product+manager"
+        }
+      },
+
+      // UX Designer skills
+      "figma-systems": {
+        free: {
+          title: "Figma Official Design Systems Guide & Best Practices",
+          provider: "Figma.com",
+          url: "https://www.figma.com/best-practices/design-systems/"
+        },
+        paid: {
+          title: "Design System Bootcamp in Figma & Component Architecture",
+          provider: "Udemy",
+          url: "https://www.udemy.com/courses/search/?q=figma+design+system+advanced"
+        }
+      },
+      "ux-research-design": {
+        free: {
+          title: "Usability 101: Introduction to Usability & Research",
+          provider: "Nielsen Norman Group",
+          url: "https://www.nngroup.com/articles/usability-101-introduction-to-usability/"
+        },
+        paid: {
+          title: "Google UX Design Professional Certificate",
+          provider: "Coursera (Google)",
+          url: "https://www.coursera.org/professional-certificates/google-ux-design"
+        }
+      },
+      "visual-design-ui": {
+        free: {
+          title: "Refactoring UI: Practical Visual Hierarchy & Spacing",
+          provider: "RefactoringUI.com",
+          url: "https://www.refactoringui.com/"
+        },
+        paid: {
+          title: "Typography and Visual Hierarchy in Digital Product Design",
+          provider: "Coursera",
+          url: "https://www.coursera.org/search?query=visual+design+typography"
+        }
+      },
+      "interaction-motion": {
+        free: {
+          title: "Material Design 3 Interaction & Motion Foundations",
+          provider: "Google Material.io",
+          url: "https://m3.material.io/foundations/interaction-states"
+        },
+        paid: {
+          title: "Motion Design with Figma & Principle Masterclass",
+          provider: "Udemy",
+          url: "https://www.udemy.com/courses/search/?q=ui+interaction+motion+design"
+        }
+      },
+      "info-architecture": {
+        free: {
+          title: "The Comprehensive Guide to Information Architecture",
+          provider: "UX Collective",
+          url: "https://uxdesign.cc/information-architecture-the-ultimate-guide-3f26fb666014"
+        },
+        paid: {
+          title: "Information Architecture & User Experience Flow Strategy",
+          provider: "Coursera",
+          url: "https://www.coursera.org/search?query=information+architecture+ux"
+        }
+      },
+      "accessibility-wcag": {
+        free: {
+          title: "W3C Web Accessibility Initiative (WAI) Fundamentals",
+          provider: "W3.org WAI",
+          url: "https://www.w3.org/WAI/fundamentals/"
+        },
+        paid: {
+          title: "Accessibility: Designing for All Users (WCAG 2.2)",
+          provider: "Coursera",
+          url: "https://www.coursera.org/search?query=web+accessibility+wcag+ux"
+        }
+      },
+      "design-handoff": {
+        free: {
+          title: "Figma Interactive Components & Dev Mode Documentation",
+          provider: "Figma Help Center",
+          url: "https://help.figma.com/hc/en-us/articles/360061175334-Create-interactive-components-with-variants"
+        },
+        paid: {
+          title: "Advanced Figma Prototyping & Developer Collaboration",
+          provider: "Udemy",
+          url: "https://www.udemy.com/courses/search/?q=advanced+figma+prototyping"
+        }
+      }
+    };
+
+    /**
+     * Resolves verified or safe-fallback resources for a skill
+     */
+    function getResourcesForSkill(skillId, skillName) {
+      if (CURATED_COURSE_MAP[skillId]) {
+        return CURATED_COURSE_MAP[skillId];
+      }
+      // Safe Fallback Tier 2: valid search query URLs
+      const encoded = encodeURIComponent(skillName);
+      return {
+        free: {
+          title: `${skillName} Complete Interactive Tutorial`,
+          provider: "freeCodeCamp / YouTube Search",
+          url: `https://www.freecodecamp.org/news/?search=${encoded}`
+        },
+        paid: {
+          title: `${skillName} Professional Specialization`,
+          provider: "Coursera Search",
+          url: `https://www.coursera.org/search?query=${encoded}`
+        }
+      };
+    }
+
+    /* ==========================================================================
+       3. APP STATE MANAGEMENT (IN-MEMORY)
+       ========================================================================== */
+    const state = {
+      selectedRoleId: null,
+      userRatings: {},     // { [skillId]: number 0-5 }
+      extraSkills: [],     // string[] (excluded from role scoring)
+      roadmap: {},         // { [key]: { id, skillId, skillName, courseTitle, provider, url, type, hours, done: boolean } }
+      lastAnalysisResult: null
+    };
+
+    const LEVEL_LABELS = [
+      "0: Never Used",
+      "1: Novice / Basics",
+      "2: Familiar / Hobby",
+      "3: Working Knowledge",
+      "4: Proficient / Pro",
+      "5: Expert / Master"
+    ];
+
+    /* ==========================================================================
+       4. INITIALIZATION & UI RENDERING
+       ========================================================================== */
+    document.addEventListener("DOMContentLoaded", () => {
+      renderRoleGrid();
+      init3DCardParallax();
+      // Select the first role by default for instant delight
+      selectRole(ROLES_DATA[0].id);
+    });
+
+    /* 3D Parallax Mouse Tracking on Hero Showcase Card */
+    function init3DCardParallax() {
+      const card = document.getElementById("hero3DCard");
+      if (!card) return;
+
+      card.addEventListener("mousemove", (e) => {
+        const rect = card.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+        const centerX = rect.width / 2;
+        const centerY = rect.height / 2;
+
+        const rotateX = -((y - centerY) / 14);
+        const rotateY = ((x - centerX) / 14);
+
+        card.style.transform = `rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale3d(1.02, 1.02, 1.02)`;
+      });
+
+      card.addEventListener("mouseleave", () => {
+        card.style.transform = "rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1)";
+      });
+    }
+
+    function renderRoleGrid() {
+      const grid = document.getElementById("rolesGrid");
+      grid.innerHTML = ROLES_DATA.map(role => `
+        <div class="role-card ${state.selectedRoleId === role.id ? 'selected' : ''}" 
+             onclick="selectRole('${role.id}')" 
+             id="roleCard-${role.id}"
+             role="button"
+             tabindex="0"
+             onkeydown="if(event.key==='Enter'||event.key===' ') selectRole('${role.id}')">
+          <div class="role-card-icon">${role.icon}</div>
+          <div class="role-card-title">${role.label}</div>
+          <div class="role-card-meta">${role.description}</div>
+          <div class="role-card-skills-count">⚡ ${role.skills.length} Industry Benchmarked Skills</div>
+        </div>
+      `).join("");
+    }
+
+    function selectRole(roleId) {
+      state.selectedRoleId = roleId;
+      const role = ROLES_DATA.find(r => r.id === roleId);
+      if (!role) return;
+
+      // Update role selection cards
+      document.querySelectorAll(".role-card").forEach(el => el.classList.remove("selected"));
+      const selectedEl = document.getElementById(`roleCard-${roleId}`);
+      if (selectedEl) selectedEl.classList.add("selected");
+
+      // Reset / initialize ratings for this role if not set
+      role.skills.forEach(skill => {
+        if (state.userRatings[skill.id] === undefined) {
+          state.userRatings[skill.id] = 0;
+        }
+      });
+
+      // Show Step 2 Panel
+      const ratingPanel = document.getElementById("selfRatingPanel");
+      ratingPanel.style.display = "block";
+
+      renderSkillsRating();
+
+      // Reset previous results if user changes role
+      document.getElementById("resultsSection").classList.remove("visible");
+    }
+
+    function renderSkillsRating() {
+      const role = ROLES_DATA.find(r => r.id === state.selectedRoleId);
+      if (!role) return;
+
+      const container = document.getElementById("skillsRatingList");
+      container.innerHTML = role.skills.map(skill => {
+        const userLevel = state.userRatings[skill.id] !== undefined ? state.userRatings[skill.id] : 0;
+        const badgeClass = skill.weight === 2 ? 'core' : (skill.weight === 1.5 ? 'important' : 'nice');
+        const isMatched = userLevel >= skill.level;
+        const isRated = userLevel > 0;
+        
+        return `
+          <div class="skill-rating-row" id="ratingRow-${skill.id}">
+            <div class="skill-info-header">
+              <div class="skill-title-block">
+                <div class="skill-name-row">
+                  <span class="skill-name">${skill.name}</span>
+                  <span class="badge-weight ${badgeClass}">
+                    ${skill.categoryLabel} (Weight: ${skill.weight}x)
+                  </span>
+                </div>
+                <div class="skill-target-req">
+                  Target Required: <span>Level ${skill.level} / 5</span> — <em>${skill.description}</em>
+                </div>
+              </div>
+
+              <div class="rating-value-pill ${isMatched ? 'active-matched' : (isRated ? 'active-rated' : '')}" id="ratingBadge-${skill.id}">
+                ${LEVEL_LABELS[userLevel]}
+              </div>
+            </div>
+
+            <div class="slider-wrapper">
+              <input type="range" 
+                     class="range-slider" 
+                     min="0" 
+                     max="5" 
+                     step="1" 
+                     value="${userLevel}" 
+                     id="slider-${skill.id}"
+                     oninput="handleSliderChange('${skill.id}', this.value)"
+                     aria-label="Proficiency slider for ${skill.name}">
+              
+              <div class="slider-ticks">
+                ${[0, 1, 2, 3, 4, 5].map(lvl => `
+                  <span class="tick-label ${lvl === skill.level ? 'required-level' : ''}" 
+                        onclick="setSkillRating('${skill.id}', ${lvl})">
+                    ${lvl}
+                  </span>
+                `).join("")}
+              </div>
+            </div>
+          </div>
+        `;
+      }).join("");
+    }
+
+    function handleSliderChange(skillId, value) {
+      const val = parseInt(value, 10);
+      state.userRatings[skillId] = val;
+      updateSkillPillUI(skillId, val);
+    }
+
+    function setSkillRating(skillId, value) {
+      state.userRatings[skillId] = value;
+      const slider = document.getElementById(`slider-${skillId}`);
+      if (slider) slider.value = value;
+      updateSkillPillUI(skillId, value);
+    }
+
+    function updateSkillPillUI(skillId, val) {
+      const pill = document.getElementById(`ratingBadge-${skillId}`);
+      const role = ROLES_DATA.find(r => r.id === state.selectedRoleId);
+      const skill = role ? role.skills.find(s => s.id === skillId) : null;
+      if (!pill || !skill) return;
+
+      pill.textContent = LEVEL_LABELS[val];
+      pill.className = "rating-value-pill";
+      if (val >= skill.level) {
+        pill.classList.add("active-matched");
+      } else if (val > 0) {
+        pill.classList.add("active-rated");
+      }
+    }
+
+    function applyPreset(level) {
+      const role = ROLES_DATA.find(r => r.id === state.selectedRoleId);
+      if (!role) return;
+      role.skills.forEach(s => {
+        state.userRatings[s.id] = level;
+      });
+      renderSkillsRating();
+    }
+
+    function matchAllRequired() {
+      const role = ROLES_DATA.find(r => r.id === state.selectedRoleId);
+      if (!role) return;
+      role.skills.forEach(s => {
+        state.userRatings[s.id] = s.level;
+      });
+      renderSkillsRating();
+    }
+
+    /* ==========================================================================
+       5. EXTRA SKILLS MANAGEMENT (EXCLUDED FROM ROLE SCORING)
+       ========================================================================== */
+    function handleExtraSkillKey(event) {
+      if (event.key === "Enter") {
+        event.preventDefault();
+        addExtraSkill();
+      }
+    }
+
+    function addExtraSkill() {
+      const input = document.getElementById("extraSkillInput");
+      const value = input.value.trim();
+      if (!value) return;
+
+      if (!state.extraSkills.includes(value)) {
+        state.extraSkills.push(value);
+        renderExtraSkills();
+      }
+      input.value = "";
+    }
+
+    function removeExtraSkill(index) {
+      state.extraSkills.splice(index, 1);
+      renderExtraSkills();
+    }
+
+    function renderExtraSkills() {
+      const container = document.getElementById("extraSkillsList");
+      container.innerHTML = state.extraSkills.map((skill, idx) => `
+        <div class="skill-chip">
+          <span>✨ ${escapeHTML(skill)}</span>
+          <span class="skill-chip-remove" onclick="removeExtraSkill(${idx})" title="Remove skill">✕</span>
+        </div>
+      `).join("");
+    }
+
+    /* ==========================================================================
+       6. CORE GAP CALCULATION & ESTIMATE LOGIC
+       ========================================================================== */
+    /**
+     * Exact calculation engine matching Sections 4 & 5
+     */
+    function computeSkillGapAnalysis(role, ratings) {
+      let weightedSum = 0;
+      let totalWeight = 0;
+      let totalEstimatedHours = 0;
+
+      const evaluatedSkills = role.skills.map(skill => {
+        const userLevel = ratings[skill.id] !== undefined ? ratings[skill.id] : 0;
+        const requiredLevel = skill.level;
+        const weight = skill.weight;
+
+        // Gap calculation: gap = max(0, required_level - user_level)
+        const gap = Math.max(0, requiredLevel - userLevel);
+
+        // Category determination:
+        // missing if user_level == 0
+        // needs-work if 0 < user_level < required_level
+        // matched if user_level >= required_level
+        let category = "matched";
+        if (userLevel === 0) {
+          category = "missing";
+        } else if (userLevel < requiredLevel) {
+          category = "needs-work";
+        }
+
+        // Priority score: priority_score = gap * weight
+        const priorityScore = gap * weight;
+
+        // Time to close estimate:
+        // base_hours_per_level = 6
+        // estimated_hours = max(2, round(gap * base_hours_per_level * (weight / 1.5)))
+        let estimatedHours = 0;
+        if (gap > 0) {
+          const baseHoursPerLevel = 6;
+          estimatedHours = Math.max(2, Math.round(gap * baseHoursPerLevel * (weight / 1.5)));
+          totalEstimatedHours += estimatedHours;
+        }
+
+        // Overall match score components:
+        // min(user_level / required_level, 1) * weight
+        const ratio = Math.min(userLevel / requiredLevel, 1);
+        weightedSum += ratio * weight;
+        totalWeight += weight;
+
+        return {
+          ...skill,
+          userLevel,
+          requiredLevel,
+          gap,
+          category,
+          priorityScore,
+          estimatedHours,
+          resources: getResourcesForSkill(skill.id, skill.name)
+        };
+      });
+
+      // Overall match score (0-100%):
+      // match_score = round( sum(min(user_level / required_level, 1) * weight) / sum(weight) * 100 )
+      const matchScore = totalWeight > 0 ? Math.round((weightedSum / totalWeight) * 100) : 0;
+
+      // Group and sort by priority_score descending
+      const missing = evaluatedSkills
+        .filter(s => s.category === "missing")
+        .sort((a, b) => b.priorityScore - a.priorityScore);
+
+      const needsWork = evaluatedSkills
+        .filter(s => s.category === "needs-work")
+        .sort((a, b) => b.priorityScore - a.priorityScore);
+
+      const matched = evaluatedSkills
+        .filter(s => s.category === "matched")
+        .sort((a, b) => b.priorityScore - a.priorityScore);
+
+      return {
+        role,
+        matchScore,
+        totalEstimatedHours,
+        missing,
+        needsWork,
+        matched,
+        evaluatedSkills
+      };
+    }
+
+    /* ==========================================================================
+       7. ANALYZE ACTION & PERCEIVED PROCESSING
+       ========================================================================== */
+    function analyzeGaps() {
+      const role = ROLES_DATA.find(r => r.id === state.selectedRoleId);
+      if (!role) return;
+
+      const btn = document.getElementById("btnAnalyze");
+      const btnIcon = document.getElementById("btnAnalyzeIcon");
+      const btnText = document.getElementById("btnAnalyzeText");
+
+      // Perceived processing state
+      btn.disabled = true;
+      btnIcon.innerHTML = `<div class="spinner"></div>`;
+      btnText.textContent = "Analyzing Skill Gaps…";
+
+      setTimeout(() => {
+        const analysis = computeSkillGapAnalysis(role, state.userRatings);
+        state.lastAnalysisResult = analysis;
+
+        // Render Results
+        renderAnalysisResults(analysis);
+
+        // Reset button
+        btn.disabled = false;
+        btnIcon.innerHTML = "⚡";
+        btnText.textContent = "Re-Analyze Skill Gaps";
+
+        // Smooth scroll to results
+        const resultsSection = document.getElementById("resultsSection");
+        resultsSection.classList.add("visible");
+        resultsSection.scrollIntoView({ behavior: "smooth", block: "start" });
+
+        // Trigger confetti celebration if high score
+        if (analysis.matchScore >= 85) {
+          triggerConfetti();
+        }
+
+      }, 480); // 480ms perceived calculation
+    }
+
+    /* ==========================================================================
+       8. RESULTS & MOTION REVEAL
+       ========================================================================== */
+    function renderAnalysisResults(analysis) {
+      const { matchScore, totalEstimatedHours, missing, needsWork, matched, role } = analysis;
+
+      // Update Coach Narrative & Badges
+      document.getElementById("coachTargetRoleLabel").textContent = `Benchmarking Target: ${role.label}`;
+      document.getElementById("rollupTotalHours").textContent = `~${totalEstimatedHours}h to close all open gaps`;
+      document.getElementById("rollupMissingCount").textContent = missing.length;
+      document.getElementById("rollupNeedsWorkCount").textContent = needsWork.length;
+      document.getElementById("rollupMatchedCount").textContent = matched.length;
+
+      const tierBadge = document.getElementById("scoreTierBadge");
+      const narrative = document.getElementById("coachNarrativeText");
+
+      if (matchScore >= 85) {
+        tierBadge.textContent = "Senior Interview Ready";
+        tierBadge.className = "score-tier-badge tier-high";
+        narrative.textContent = `🎯 Exceptional alignment! You meet or exceed ${matched.length} of ${role.skills.length} core requirements for ${role.label}. A rapid sprint on your minor nuances will make you an undisputed standout in hiring pipelines.`;
+      } else if (matchScore >= 60) {
+        tierBadge.textContent = "Strong Contender";
+        tierBadge.className = "score-tier-badge tier-mid";
+        narrative.textContent = `⚡ Solid foundation! You have fundamental working strengths in place. Focused study on your ${missing.length + needsWork.length} priority gaps (${totalEstimatedHours} estimated hours) will bring your profile into strong hiring alignment.`;
+      } else if (matchScore >= 35) {
+        tierBadge.textContent = "High Growth Trajectory";
+        tierBadge.className = "score-tier-badge tier-mid";
+        narrative.textContent = `🚀 Great momentum! You possess foundational technical intuition. Tackling the highest-weighted core gaps in your personal roadmap below will give you the fastest leverage curve.`;
+      } else {
+        tierBadge.textContent = "Career Pivot Track";
+        tierBadge.className = "score-tier-badge tier-low";
+        narrative.textContent = `🌱 Welcome to your new path! Every elite engineer starts at square one. Start with the free tier-1 foundations below, chip away steadily, and watch your roadmap completion compound.`;
+      }
+
+      // Animate Score Counter (0 to matchScore)
+      animateScoreCountUp(matchScore);
+
+      // Render Categories
+      const categoriesContainer = document.getElementById("gapCategoriesContainer");
+      categoriesContainer.innerHTML = "";
+
+      // Section 1: Critical Missing Skills
+      if (missing.length > 0) {
+        categoriesContainer.appendChild(createCategorySectionElement(
+          "🚨 Critical Missing Skills",
+          "Skills you currently have no experience with (Level 0). High leverage targets to unlock first.",
+          missing,
+          "missing"
+        ));
+      }
+
+      // Section 2: Skills Needing Improvement
+      if (needsWork.length > 0) {
+        categoriesContainer.appendChild(createCategorySectionElement(
+          "⚡ Skills Needing Improvement",
+          "Skills where you have partial working knowledge, but need deeper mastery to meet production grade.",
+          needsWork,
+          "needs-work"
+        ));
+      }
+
+      // Section 3: Matched & Exceeded
+      if (matched.length > 0) {
+        categoriesContainer.appendChild(createCategorySectionElement(
+          "✅ Matched & Verified Skills",
+          "Skills where your self-rating meets or exceeds the industry target requirement.",
+          matched,
+          "matched"
+        ));
+      }
+
+      // Trigger Staggered Entrance Animations
+      triggerStaggeredEntrance();
+    }
+
+    function animateScoreCountUp(targetScore) {
+      const display = document.getElementById("matchScoreDisplay");
+      // Check prefers-reduced-motion
+      const prefersReduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      if (prefersReduced) {
+        display.textContent = `${targetScore}%`;
+        return;
+      }
+
+      let startTimestamp = null;
+      const duration = 700; // ms
+
+      function step(timestamp) {
+        if (!startTimestamp) startTimestamp = timestamp;
+        const progress = Math.min((timestamp - startTimestamp) / duration, 1);
+        // Ease out cubic
+        const easeOut = 1 - Math.pow(1 - progress, 3);
+        const currentVal = Math.round(easeOut * targetScore);
+        display.textContent = `${currentVal}%`;
+
+        if (progress < 1) {
+          window.requestAnimationFrame(step);
+        } else {
+          display.textContent = `${targetScore}%`;
+        }
+      }
+
+      window.requestAnimationFrame(step);
+    }
+
+    function createCategorySectionElement(title, desc, skills, categoryType) {
+      const section = document.createElement("div");
+      section.className = "gap-category-group";
+
+      section.innerHTML = `
+        <div class="category-header">
+          <div>
+            <h3 class="category-title">
+              <span>${title}</span>
+              <span class="category-count">${skills.length} ${skills.length === 1 ? 'skill' : 'skills'}</span>
+            </h3>
+            <p style="font-size: 0.84rem; color: var(--text-secondary); margin-top: 2px;">${desc}</p>
+          </div>
+        </div>
+        <div class="gap-cards-list" style="display: flex; flex-direction: column; gap: 14px;">
+          ${skills.map((skill, index) => renderGapCardHTML(skill, categoryType, index)).join("")}
+        </div>
+      `;
+
+      return section;
+    }
+
+    function renderGapCardHTML(skill, categoryType, index) {
+      const badgeClass = skill.weight === 2 ? 'core' : (skill.weight === 1.5 ? 'important' : 'nice');
+      const isMatched = categoryType === "matched";
+
+      // Render Visual Ladder / Bridge Bar
+      const segments = [1, 2, 3, 4, 5].map(lvl => {
+        let segClass = "ladder-segment";
+        if (lvl <= skill.userLevel) {
+          segClass += " user-filled";
+        } else if (lvl <= skill.requiredLevel) {
+          segClass += " gap-filled";
+        }
+        if (lvl === skill.requiredLevel) {
+          segClass += " target-marker";
+        }
+        return `<div class="${segClass}" title="Level ${lvl}"></div>`;
+      }).join("");
+
+      // Recommendations (missing & needs-work ONLY)
+      let recommendationsHTML = "";
+      if (!isMatched && skill.resources) {
+        const freeKey = `${skill.id}::free`;
+        const paidKey = `${skill.id}::paid`;
+        const isFreeInRoadmap = !!state.roadmap[freeKey];
+        const isPaidInRoadmap = !!state.roadmap[paidKey];
+
+        recommendationsHTML = `
+          <div class="course-recommendations-row">
+            
+            <!-- FREE COURSE PILL (Clean Emerald Badge) -->
+            <div class="course-pill-card free-card">
+              <div class="course-top-info">
+                <div class="course-badge-row">
+                  <span class="course-type-badge free">FREE RESOURCE</span>
+                  <span class="course-source-tag">${escapeHTML(skill.resources.free.provider)}</span>
+                </div>
+                <a href="${skill.resources.free.url}" target="_blank" rel="noopener noreferrer" class="course-link-title">
+                  <span>${escapeHTML(skill.resources.free.title)}</span>
+                  <span class="ext-icon">↗</span>
+                </a>
+              </div>
+              <button class="btn-roadmap-toggle ${isFreeInRoadmap ? 'in-roadmap' : ''}" 
+                      onclick="toggleRoadmapItem('${skill.id}', 'free')" 
+                      id="btnRoadmap-${skill.id}-free">
+                ${isFreeInRoadmap ? '✓ In Roadmap' : '+ Add to Roadmap'}
+              </button>
+            </div>
+
+            <!-- PAID COURSE PILL (LUXURY GOLD LIGHTING BACKGROUND & BADGE) -->
+            <div class="course-pill-card paid-gold-card">
+              <div class="course-top-info">
+                <div class="course-badge-row">
+                  <span class="course-type-badge paid">⭐ PAID COURSE / CERT</span>
+                  <span class="course-source-tag">${escapeHTML(skill.resources.paid.provider)}</span>
+                </div>
+                <a href="${skill.resources.paid.url}" target="_blank" rel="noopener noreferrer" class="course-link-title">
+                  <span>${escapeHTML(skill.resources.paid.title)}</span>
+                  <span class="ext-icon">↗</span>
+                </a>
+              </div>
+              <button class="btn-roadmap-toggle ${isPaidInRoadmap ? 'in-roadmap' : ''}" 
+                      onclick="toggleRoadmapItem('${skill.id}', 'paid')" 
+                      id="btnRoadmap-${skill.id}-paid">
+                ${isPaidInRoadmap ? '✓ In Roadmap' : '+ Add to Roadmap'}
+              </button>
+            </div>
+
+          </div>
+        `;
+      } else if (isMatched) {
+        recommendationsHTML = `
+          <div class="matched-celebration">
+            <span>✨ You meet or exceed the target requirement (Level ${skill.userLevel} ≥ Level ${skill.requiredLevel}). No open gap to close.</span>
+          </div>
+        `;
+      }
+
+      return `
+        <div class="gap-card ${categoryType}" id="gapCard-${skill.id}">
+          <div class="gap-card-header">
+            <div class="gap-card-title-group">
+              <div class="gap-card-title">
+                <span>${skill.name}</span>
+                <span class="badge-weight ${badgeClass}">${skill.categoryLabel}</span>
+              </div>
+              <div class="gap-badges-row">
+                <span class="priority-badge">Priority Score: ${skill.priorityScore.toFixed(1)}</span>
+                ${!isMatched ? `<span class="hours-estimate-pill">⏱️ ~${skill.estimatedHours}h to close (est.)</span>` : ''}
+              </div>
+            </div>
+
+            <div style="text-align: right; font-size: 0.88rem; font-family: var(--font-mono); font-weight: 700;">
+              <span style="color: var(--text-muted);">Current: </span>
+              <strong style="color: ${isMatched ? '#059669' : '#d97706'};">Level ${skill.userLevel}</strong>
+              <span style="color: var(--text-muted);"> / Target: </span>
+              <strong style="color: #0284c7;">Level ${skill.requiredLevel}</strong>
+            </div>
+          </div>
+
+          <!-- Gap Bridge Visual Ladder -->
+          <div class="gap-bridge-container">
+            <div class="bridge-labels">
+              <span>Proficiency Bridge</span>
+              <span>${isMatched ? 'Requirement Met' : `Gap Delta: -${skill.gap} ${skill.gap === 1 ? 'level' : 'levels'}`}</span>
+            </div>
+            <div class="ladder-track">
+              ${segments}
+            </div>
+          </div>
+
+          <!-- Recommendations -->
+          ${recommendationsHTML}
+        </div>
+      `;
+    }
+
+    function triggerStaggeredEntrance() {
+      const cards = document.querySelectorAll(".gap-card");
+      cards.forEach((card, i) => {
+        setTimeout(() => {
+          card.classList.add("animated-in");
+        }, i * 50); // 50ms stagger
+      });
+    }
+
+    /* ==========================================================================
+       9. RETENTION ROADMAP SYSTEM & CELEBRATION
+       ========================================================================== */
+    function toggleRoadmapItem(skillId, type) {
+      const key = `${skillId}::${type}`;
+      const role = ROLES_DATA.find(r => r.id === state.selectedRoleId);
+      const skill = role ? role.skills.find(s => s.id === skillId) : null;
+      if (!skill) return;
+
+      const resources = getResourcesForSkill(skill.id, skill.name);
+      const res = type === "free" ? resources.free : resources.paid;
+
+      if (state.roadmap[key]) {
+        // Remove
+        delete state.roadmap[key];
+      } else {
+        // Add
+        const gap = Math.max(0, skill.level - (state.userRatings[skill.id] || 0));
+        const estimatedHours = Math.max(2, Math.round(gap * 6 * (skill.weight / 1.5)));
+        state.roadmap[key] = {
+          id: key,
+          skillId: skill.id,
+          skillName: skill.name,
+          courseTitle: res.title,
+          provider: res.provider,
+          url: res.url,
+          type: type,
+          hours: estimatedHours,
+          done: false
+        };
+      }
+
+      updateRoadmapUI();
+      updateRoadmapButtonState(skillId, type);
+    }
+
+    function updateRoadmapButtonState(skillId, type) {
+      const key = `${skillId}::${type}`;
+      const btn = document.getElementById(`btnRoadmap-${skillId}-${type}`);
+      if (!btn) return;
+
+      const inRoadmap = !!state.roadmap[key];
+      if (inRoadmap) {
+        btn.classList.add("in-roadmap");
+        btn.textContent = "✓ In Roadmap";
+      } else {
+        btn.classList.remove("in-roadmap");
+        btn.textContent = "+ Add to Roadmap";
+      }
+    }
+
+    function toggleRoadmapItemDone(key) {
+      if (state.roadmap[key]) {
+        state.roadmap[key].done = !state.roadmap[key].done;
+        updateRoadmapUI();
+        if (state.roadmap[key].done) {
+          triggerConfetti();
+        }
+      }
+    }
+
+    function removeRoadmapItem(key) {
+      if (state.roadmap[key]) {
+        const item = state.roadmap[key];
+        delete state.roadmap[key];
+        updateRoadmapUI();
+        updateRoadmapButtonState(item.skillId, item.type);
+      }
+    }
+
+    function updateRoadmapUI() {
+      const keys = Object.keys(state.roadmap);
+      const totalCount = keys.length;
+      const sidebar = document.getElementById("roadmapSidebar");
+      const workspace = document.getElementById("analyzerWorkspace");
+      const navBadge = document.getElementById("navRoadmapTrigger");
+      const navCount = document.getElementById("navRoadmapCount");
+
+      if (totalCount === 0) {
+        sidebar.classList.remove("visible");
+        workspace.classList.remove("has-roadmap");
+        navBadge.style.display = "none";
+        return;
+      }
+
+      // Show roadmap sidebar & header link
+      sidebar.classList.add("visible");
+      workspace.classList.add("has-roadmap");
+      navBadge.style.display = "inline-flex";
+      navCount.textContent = `(${totalCount})`;
+
+      // Calculations
+      const completedCount = keys.filter(k => state.roadmap[k].done).length;
+      const percent = Math.round((completedCount / totalCount) * 100);
+      const remainingHours = keys
+        .filter(k => !state.roadmap[k].done)
+        .reduce((sum, k) => sum + (state.roadmap[k].hours || 0), 0);
+
+      document.getElementById("roadmapCountBadge").textContent = `${totalCount} ${totalCount === 1 ? 'item' : 'items'}`;
+      document.getElementById("roadmapProgressText").textContent = `${completedCount} of ${totalCount} complete (${percent}%)`;
+      document.getElementById("roadmapHoursLeft").textContent = `~${remainingHours}h left`;
+      document.getElementById("roadmapProgressFill").style.width = `${percent}%`;
+
+      // Render list
+      const container = document.getElementById("roadmapItemsContainer");
+      container.innerHTML = keys.map(key => {
+        const item = state.roadmap[key];
+        const isPaid = item.type === "paid";
+        return `
+          <div class="roadmap-item-row ${isPaid ? 'is-paid-roadmap' : ''} ${item.done ? 'is-done' : ''}" id="roadmapRow-${escapeHTML(item.id)}">
+            <input type="checkbox" 
+                   class="roadmap-checkbox" 
+                   ${item.done ? 'checked' : ''} 
+                   onchange="toggleRoadmapItemDone('${item.id}')"
+                   aria-label="Mark ${escapeHTML(item.courseTitle)} as done">
+            
+            <div class="roadmap-item-details">
+              <span class="roadmap-item-skill ${isPaid ? 'gold-label' : ''}">
+                ${isPaid ? '⭐ ' : ''}${escapeHTML(item.skillName)} • ${item.type.toUpperCase()}
+              </span>
+              <a href="${item.url}" target="_blank" rel="noopener noreferrer" class="roadmap-item-name">
+                ${escapeHTML(item.courseTitle)} ↗
+              </a>
+            </div>
+
+            <button class="roadmap-item-remove" onclick="removeRoadmapItem('${item.id}')" title="Remove from roadmap">✕</button>
+          </div>
+        `;
+      }).join("");
+    }
+
+    function scrollToRoadmap() {
+      const sidebar = document.getElementById("roadmapSidebar");
+      if (sidebar) {
+        sidebar.scrollIntoView({ behavior: "smooth", block: "center" });
+      }
+    }
+
+    function escapeHTML(str) {
+      if (!str) return "";
+      return String(str)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+    }
+
+    /* ==========================================================================
+       10. LIGHTWEIGHT HIGH-PERFORMANCE CONFETTI ENGINE
+       ========================================================================== */
+    function triggerConfetti() {
+      const prefersReduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      if (prefersReduced) return;
+
+      const canvas = document.getElementById("confettiCanvas");
+      if (!canvas) return;
+      const ctx = canvas.getContext("2d");
+      
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+
+      const colors = ["#4f46e5", "#0284c7", "#10b981", "#f59e0b", "#eab308", "#ec4899", "#8b5cf6"];
+      const particles = [];
+      const particleCount = 75;
+
+      for (let i = 0; i < particleCount; i++) {
+        particles.push({
+          x: canvas.width / 2 + (Math.random() * 200 - 100),
+          y: canvas.height * 0.45,
+          radius: Math.random() * 5 + 3,
+          color: colors[Math.floor(Math.random() * colors.length)],
+          vx: (Math.random() - 0.5) * 14,
+          vy: Math.random() * -12 - 4,
+          gravity: 0.35,
+          rotation: Math.random() * 360,
+          rotationSpeed: (Math.random() - 0.5) * 12,
+          opacity: 1
+        });
+      }
+
+      let animationFrame;
+      function animate() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        let activeParticles = 0;
+
+        particles.forEach(p => {
+          p.x += p.vx;
+          p.y += p.vy;
+          p.vy += p.gravity;
+          p.rotation += p.rotationSpeed;
+          p.opacity -= 0.012;
+
+          if (p.opacity > 0) {
+            activeParticles++;
+            ctx.save();
+            ctx.translate(p.x, p.y);
+            ctx.rotate((p.rotation * Math.PI) / 180);
+            ctx.globalAlpha = p.opacity;
+            ctx.fillStyle = p.color;
+            ctx.fillRect(-p.radius, -p.radius, p.radius * 2, p.radius * 1.5);
+            ctx.restore();
+          }
+        });
+
+        if (activeParticles > 0) {
+          animationFrame = requestAnimationFrame(animate);
+        } else {
+          ctx.clearRect(0, 0, canvas.width, canvas.height);
+          cancelAnimationFrame(animationFrame);
+        }
+      }
+
+      animate();
+    }
+  </script>
+</body>
+</html>
