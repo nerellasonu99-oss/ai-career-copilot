@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
@@ -713,7 +713,28 @@
     /* STEP 1: ROLE SELECTOR */
     .role-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+      gap: 16px;
+    }
+
+    .role-group {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .role-group-title {
+      font-size: 0.88rem;
+      font-weight: 800;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      padding-left: 4px;
+    }
+
+    .role-group-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
       gap: 16px;
     }
 
@@ -764,6 +785,26 @@
       padding: 2px 8px;
       border-radius: var(--radius-pill);
       animation: badgePop 0.3s ease-out;
+    }
+
+    .role-card.more-card {
+      background: linear-gradient(135deg, rgba(79, 70, 229, 0.12), rgba(14, 165, 233, 0.12));
+      border: 2px solid rgba(79, 70, 229, 0.5);
+      box-shadow: 0 14px 28px -18px rgba(79, 70, 229, 0.8);
+      justify-content: center;
+      align-items: center;
+      min-height: 160px;
+      text-align: center;
+    }
+
+    .role-card.more-card .role-card-title {
+      color: #312e81;
+      font-size: 1.15rem;
+    }
+
+    .role-card.more-card .role-card-meta {
+      color: #4338ca;
+      font-weight: 700;
     }
 
     @keyframes badgePop {
@@ -1659,10 +1700,51 @@
       letter-spacing: 0.05em;
     }
 
+    .youtube-card {
+      background: linear-gradient(135deg, #101827 0%, #0f172a 48%, #1f2937 100%);
+      border: 1.5px solid rgba(239, 68, 68, 0.55);
+      box-shadow: 0 10px 22px rgba(239, 68, 68, 0.18), 0 0 18px rgba(248, 113, 113, 0.22);
+      overflow: hidden;
+      position: relative;
+    }
+
+    .youtube-card::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at top right, rgba(239, 68, 68, 0.22), transparent 35%);
+      pointer-events: none;
+    }
+
     .course-type-badge.free {
-      background: #ecfdf5;
-      border: 1px solid #a7f3d0;
-      color: #065f46;
+      background: linear-gradient(135deg, #fee2e2 0%, #fca5a5 100%);
+      border: 1px solid rgba(239, 68, 68, 0.7);
+      color: #7f1d1d;
+      box-shadow: 0 2px 8px rgba(239, 68, 68, 0.18);
+    }
+
+    .youtube-card .course-source-tag {
+      color: #f8d7d7;
+    }
+
+    .youtube-card .course-link-title {
+      color: #f8fafc;
+    }
+
+    .youtube-card .course-link-title:hover {
+      color: #fca5a5;
+    }
+
+    .youtube-card .btn-roadmap-toggle {
+      background: rgba(255, 255, 255, 0.08);
+      border-color: rgba(248, 113, 113, 0.45);
+      color: #fef2f2;
+    }
+
+    .youtube-card .btn-roadmap-toggle:hover {
+      background: rgba(239, 68, 68, 0.18);
+      border-color: rgba(252, 165, 165, 0.8);
+      color: #fff;
     }
 
     /* GOLD BADGE STYLING */
@@ -2338,388 +2420,188 @@
        ========================================================================== */
     const ROLES_DATA = [
       {
-        id: "frontend-dev",
-        label: "Frontend Developer",
-        icon: "💻",
-        description: "Build high-performance web applications, fluid user interfaces, and accessible design systems.",
+        id: "ai-ml-engineer",
+        label: "AI / ML Engineer",
+        icon: "🤖",
+        description: "Build predictive systems, learn from structured/real-world data, and ship AI features with strong production discipline.",
         skills: [
-          {
-            id: "js-ts",
-            name: "Modern JavaScript & TypeScript",
-            level: 4,
-            weight: 2,
-            categoryLabel: "CORE",
-            description: "ES6+, async concurrency, strict typing, generics, closures, and DOM event model."
-          },
-          {
-            id: "react-next",
-            name: "React 19 & Next.js App Router",
-            level: 4,
-            weight: 2,
-            categoryLabel: "CORE",
-            description: "Server Components, hooks, state hydration, routing patterns, and component lifecycle."
-          },
-          {
-            id: "css-tailwind",
-            name: "Modern CSS & Tailwind Architecture",
-            level: 3,
-            weight: 1.5,
-            categoryLabel: "IMPORTANT",
-            description: "CSS Grid, Flexbox, responsive layouts, utility-first CSS, and CSS custom variables."
-          },
-          {
-            id: "web-perf",
-            name: "Web Performance & Core Web Vitals",
-            level: 3,
-            weight: 1.5,
-            categoryLabel: "IMPORTANT",
-            description: "LCP/INP/CLS optimization, bundle splitting, lazy loading, caching headers, and rendering metrics."
-          },
-          {
-            id: "state-mgmt",
-            name: "State Management (Zustand / TanStack)",
-            level: 3,
-            weight: 1.5,
-            categoryLabel: "IMPORTANT",
-            description: "Server state caching, optimistic updates, global store patterns, and synchronization."
-          },
-          {
-            id: "testing-fe",
-            name: "Automated Testing (Vitest & Playwright)",
-            level: 3,
-            weight: 1.5,
-            categoryLabel: "IMPORTANT",
-            description: "Unit testing components, mock server handlers (MSW), and End-to-End browser test flows."
-          },
-          {
-            id: "browser-apis",
-            name: "Browser APIs & Web Security",
-            level: 2,
-            weight: 1,
-            categoryLabel: "NICE-TO-HAVE",
-            description: "Web Workers, LocalStorage/IndexedDB, CORS, CSP policies, and XSS sanitization."
-          }
+          { id: "python-datascience", name: "Python Data Stack (Pandas & NumPy)", level: 4, weight: 2, categoryLabel: "CORE", description: "Feature extraction, vectorized processing, and analysis pipelines." },
+          { id: "machine-learning", name: "Machine Learning Foundations", level: 4, weight: 2, categoryLabel: "CORE", description: "Model selection, validation, and optimization workflows." },
+          { id: "deep-learning", name: "Deep Learning & Neural Networks", level: 3, weight: 1.5, categoryLabel: "IMPORTANT", description: "State-of-the-art model training and inference handling." },
+          { id: "feature-engineering", name: "Feature Engineering & Data Quality", level: 3, weight: 1.5, categoryLabel: "IMPORTANT", description: "Data preparation and feature design for real business problems." },
+          { id: "mlops-deploy", name: "Model Deployment & Monitoring", level: 3, weight: 1.5, categoryLabel: "IMPORTANT", description: "Serving, versioning, and tracking deployed ML systems." },
+          { id: "data-visualization", name: "Model Results Communication", level: 2, weight: 1, categoryLabel: "NICE-TO-HAVE", description: "Explainability, reporting, and story-driven analysis." }
         ]
       },
       {
-        id: "backend-dev",
-        label: "Backend Developer",
-        icon: "⚙️",
-        description: "Architect scalable server architectures, resilient APIs, database schemas, and microservices.",
+        id: "generative-ai-engineer",
+        label: "Generative AI / AI Engineer",
+        icon: "🧠",
+        description: "Design AI products, integrate LLM workflows, and build agents that reason, retrieve, and act across systems.",
         skills: [
-          {
-            id: "server-runtime",
-            name: "Server Runtimes (Node.js / Go / Python)",
-            level: 4,
-            weight: 2,
-            categoryLabel: "CORE",
-            description: "Event-loop concurrency, goroutines/async IO, memory management, and process architecture."
-          },
-          {
-            id: "api-design",
-            name: "REST, GraphQL & gRPC API Design",
-            level: 4,
-            weight: 2,
-            categoryLabel: "CORE",
-            description: "Contract-first schemas, idempotency, versioning, pagination, and error payload standards."
-          },
-          {
-            id: "sql-postgres",
-            name: "PostgreSQL & Database Optimization",
-            level: 4,
-            weight: 2,
-            categoryLabel: "CORE",
-            description: "Relational schema design, indexes, ACID transactions, query plans (EXPLAIN ANALYZE), and locks."
-          },
-          {
-            id: "caching-redis",
-            name: "Redis & Distributed Caching",
-            level: 3,
-            weight: 1.5,
-            categoryLabel: "IMPORTANT",
-            description: "Cache-aside strategies, cache invalidation, rate limiting, and pub/sub messaging patterns."
-          },
-          {
-            id: "microservices-msg",
-            name: "Microservices & Message Queues (Kafka/RabbitMQ)",
-            level: 3,
-            weight: 1.5,
-            categoryLabel: "IMPORTANT",
-            description: "Event-driven architecture, consumer lag, at-least-once delivery, and service mesh basics."
-          },
-          {
-            id: "auth-security",
-            name: "Authentication (OAuth2/JWT) & Security",
-            level: 3,
-            weight: 1.5,
-            categoryLabel: "IMPORTANT",
-            description: "RBAC, JWT token rotation, bcrypt hashing, SQL injection prevention, and OWASP Top 10."
-          },
-          {
-            id: "docker-dev",
-            name: "Docker & Containerized Workflows",
-            level: 3,
-            weight: 1,
-            categoryLabel: "NICE-TO-HAVE",
-            description: "Multi-stage Docker builds, docker-compose orchestration, and container networking."
-          }
+          { id: "python-datascience", name: "LLM Application Prototyping", level: 4, weight: 2, categoryLabel: "CORE", description: "Prompt workflows, data preparation, experimentation, and iteration." },
+          { id: "api-design", name: "API Design & Tool Calling", level: 4, weight: 2, categoryLabel: "CORE", description: "Structured interfaces for AI systems and retrieval connectors." },
+          { id: "machine-learning", name: "Model Selection & Evaluation", level: 4, weight: 2, categoryLabel: "CORE", description: "Choosing the right model and judging performance for real tasks." },
+          { id: "auth-security", name: "AI Safety & Secure Integration", level: 3, weight: 1.5, categoryLabel: "IMPORTANT", description: "Prompt injection defenses, permissions, and secure boundaries." },
+          { id: "sql-postgres", name: "Knowledge Retrieval Systems", level: 3, weight: 1.5, categoryLabel: "IMPORTANT", description: "Vector and document retrieval strategies for grounded AI applications." },
+          { id: "server-runtime", name: "Agentic System Design", level: 3, weight: 1.5, categoryLabel: "IMPORTANT", description: "Reasoning loops, memory, orchestration, and workflow automation." }
         ]
       },
       {
-        id: "devops-engineer",
-        label: "DevOps & Cloud Architect",
+        id: "cloud-engineer",
+        label: "Cloud Engineer",
         icon: "☁️",
-        description: "Automate infrastructure, maintain high availability cloud clusters, CI/CD, and telemetry.",
+        description: "Design resilient cloud infrastructure, manage networking, and build secure, scalable platforms on AWS/Azure/GCP.",
         skills: [
-          {
-            id: "linux-shell",
-            name: "Linux Administration & Shell Scripting",
-            level: 4,
-            weight: 2,
-            categoryLabel: "CORE",
-            description: "Systemd, kernel signals, bash automation, filesystem permissions, and network debugging."
-          },
-          {
-            id: "docker-k8s",
-            name: "Kubernetes & Container Orchestration",
-            level: 4,
-            weight: 2,
-            categoryLabel: "CORE",
-            description: "Pods, Deployments, Services, Ingress controllers, Helm charts, and cluster autoscaling."
-          },
-          {
-            id: "terraform-iac",
-            name: "Terraform & Infrastructure as Code",
-            level: 4,
-            weight: 2,
-            categoryLabel: "CORE",
-            description: "Declarative cloud provisioning, state management, modules, and multi-environment drift detection."
-          },
-          {
-            id: "cloud-providers",
-            name: "Cloud Architecture (AWS / GCP)",
-            level: 4,
-            weight: 2,
-            categoryLabel: "CORE",
-            description: "VPC networking, IAM zero-trust, serverless compute, managed databases, and cloud security."
-          },
-          {
-            id: "cicd-pipelines",
-            name: "CI/CD Pipelines (GitHub Actions / GitLab)",
-            level: 3,
-            weight: 1.5,
-            categoryLabel: "IMPORTANT",
-            description: "Automated test runs, build matrix caching, canary rollouts, and artifact registry security."
-          },
-          {
-            id: "observability",
-            name: "Observability (Prometheus & Grafana)",
-            level: 3,
-            weight: 1.5,
-            categoryLabel: "IMPORTANT",
-            description: "Metrics scraping, alertmanager rule triggers, distributed tracing (OpenTelemetry), and log aggregation."
-          },
-          {
-            id: "cloud-sec-comp",
-            name: "Cloud Security & Secrets Management",
-            level: 2,
-            weight: 1,
-            categoryLabel: "NICE-TO-HAVE",
-            description: "Vault integration, KMS key rotation, SOC2 audit trails, and container image vulnerability scans."
-          }
+          { id: "cloud-providers", name: "Cloud Architecture (AWS / Azure / GCP)", level: 4, weight: 2, categoryLabel: "CORE", description: "Compute, storage, IAM, networking, and multi-region design." },
+          { id: "terraform-iac", name: "Infrastructure as Code", level: 4, weight: 2, categoryLabel: "CORE", description: "Provisioning, drift management, and repeatable environment setup." },
+          { id: "linux-shell", name: "Linux & Shell Skills", level: 4, weight: 2, categoryLabel: "CORE", description: "System operations, logs, diagnosis, and automation." },
+          { id: "docker-k8s", name: "Containers & Kubernetes", level: 3, weight: 1.5, categoryLabel: "IMPORTANT", description: "Pods, services, deployments, and orchestration patterns." },
+          { id: "cloud-sec-comp", name: "Cloud Security & IAM", level: 3, weight: 1.5, categoryLabel: "IMPORTANT", description: "Least privilege, policy design, and secure networking." },
+          { id: "observability", name: "Monitoring & Cost Optimization", level: 3, weight: 1.5, categoryLabel: "IMPORTANT", description: "Metrics, uptime checks, and cloud cost governance." }
         ]
       },
       {
-        id: "data-scientist",
-        label: "Data Scientist & ML Engineer",
-        icon: "📊",
-        description: "Extract deep statistical insights, train machine learning models, and deploy AI pipelines.",
+        id: "devops-platform-engineer",
+        label: "DevOps / Platform Engineer",
+        icon: "⚙️",
+        description: "Automate delivery pipelines, platform workflows, and reliability engineering for production teams.",
         skills: [
-          {
-            id: "python-datascience",
-            name: "Python Data Stack (Pandas & NumPy)",
-            level: 4,
-            weight: 2,
-            categoryLabel: "CORE",
-            description: "Vectorized data manipulation, matrix algebra, data cleaning, and statistical transformations."
-          },
-          {
-            id: "machine-learning",
-            name: "Machine Learning (Scikit-Learn)",
-            level: 4,
-            weight: 2,
-            categoryLabel: "CORE",
-            description: "Supervised/unsupervised algorithms, gradient boosting (XGBoost), cross-validation, and hyperparameter tuning."
-          },
-          {
-            id: "sql-analytics",
-            name: "SQL & Data Warehouse Modeling",
-            level: 4,
-            weight: 2,
-            categoryLabel: "CORE",
-            description: "Window functions, star schema modeling, CTEs, cohort analysis, and analytical query performance."
-          },
-          {
-            id: "deep-learning",
-            name: "Deep Learning & Neural Nets (PyTorch)",
-            level: 3,
-            weight: 1.5,
-            categoryLabel: "IMPORTANT",
-            description: "Tensors, backpropagation, CNNs/Transformers architecture, fine-tuning, and GPU training."
-          },
-          {
-            id: "data-visualization",
-            name: "Data Storytelling & Visualization (Plotly/Seaborn)",
-            level: 3,
-            weight: 1.5,
-            categoryLabel: "IMPORTANT",
-            description: "Exploratory data analysis plots, distribution curves, interactive dashboards, and executive reporting."
-          },
-          {
-            id: "feature-engineering",
-            name: "Feature Engineering & Metric Validation",
-            level: 3,
-            weight: 1.5,
-            categoryLabel: "IMPORTANT",
-            description: "Categorical encoding, dimensionality reduction (PCA), ROC-AUC, precision-recall curve analysis."
-          },
-          {
-            id: "mlops-deploy",
-            name: "MLOps & Model Deployment (FastAPI / MLflow)",
-            level: 2,
-            weight: 1,
-            categoryLabel: "NICE-TO-HAVE",
-            description: "Model registry versioning, real-time inference microservice endpoints, and drift monitoring."
-          }
+          { id: "docker-k8s", name: "Kubernetes & Container Orchestration", level: 4, weight: 2, categoryLabel: "CORE", description: "Cluster management, deploys, autoscaling, and resilience." },
+          { id: "cicd-pipelines", name: "CI/CD Pipelines", level: 4, weight: 2, categoryLabel: "CORE", description: "Build, test, deploy, and rollback automation." },
+          { id: "terraform-iac", name: "Platform Automation & IaC", level: 4, weight: 2, categoryLabel: "CORE", description: "Reproducible platform setup and environment governance." },
+          { id: "observability", name: "Monitoring & Alerting", level: 3, weight: 1.5, categoryLabel: "IMPORTANT", description: "Metrics, alerting, logs, and SRE practices." },
+          { id: "linux-shell", name: "Linux & Scripting", level: 3, weight: 1.5, categoryLabel: "IMPORTANT", description: "Automation and system troubleshooting." },
+          { id: "cloud-sec-comp", name: "Secrets & Platform Security", level: 3, weight: 1, categoryLabel: "NICE-TO-HAVE", description: "Secrets management and secure platform boundaries." }
         ]
       },
       {
-        id: "product-manager",
-        label: "Product Manager",
-        icon: "🎯",
-        description: "Drive product vision, prioritize roadmap initiatives, conduct customer discovery, and lead cross-functional delivery.",
+        id: "cybersecurity-engineer",
+        label: "Cybersecurity Engineer / Analyst",
+        icon: "🔐",
+        description: "Protect systems, analyze threats, and strengthen security posture across users, infrastructure, and applications.",
         skills: [
-          {
-            id: "product-strategy",
-            name: "Product Strategy & Roadmapping",
-            level: 4,
-            weight: 2,
-            categoryLabel: "CORE",
-            description: "Vision setting, OKR alignment, market opportunity sizing, positioning, and outcome-driven roadmap planning."
-          },
-          {
-            id: "user-discovery",
-            name: "User Research & Customer Interviews",
-            level: 4,
-            weight: 2,
-            categoryLabel: "CORE",
-            description: "Continuous discovery habits, JTBD framework, user pain point synthesis, and usability testing."
-          },
-          {
-            id: "product-metrics",
-            name: "Product Analytics & North Star KPIs",
-            level: 4,
-            weight: 2,
-            categoryLabel: "CORE",
-            description: "Funnel conversion, retention cohorts, A/B experiment design, statistical significance, and LTV/CAC metrics."
-          },
-          {
-            id: "agile-delivery",
-            name: "Agile Execution & Sprint Management",
-            level: 3,
-            weight: 1.5,
-            categoryLabel: "IMPORTANT",
-            description: "User story mapping, backlog grooming, acceptance criteria definition, and sprint retrospective facilitation."
-          },
-          {
-            id: "tech-fluency",
-            name: "Technical Fluency & System Architecture",
-            level: 3,
-            weight: 1.5,
-            categoryLabel: "IMPORTANT",
-            description: "Understanding REST APIs, database tradeoffs, technical debt evaluation, and engineering collaboration."
-          },
-          {
-            id: "stakeholder-influence",
-            name: "Stakeholder Management & Executive Comms",
-            level: 3,
-            weight: 1.5,
-            categoryLabel: "IMPORTANT",
-            description: "Executive presentation decks, cross-functional alignment, objection handling, and crisis communication."
-          },
-          {
-            id: "rapid-prototyping",
-            name: "Wireframing & UI Spec Prototyping",
-            level: 2,
-            weight: 1,
-            categoryLabel: "NICE-TO-HAVE",
-            description: "Low-fidelity wireframing in Figma/Whimsical, PRD documentation, and user flow diagrams."
-          }
+          { id: "auth-security", name: "Identity, OAuth & Security Controls", level: 4, weight: 2, categoryLabel: "CORE", description: "Authentication flows, tokens, and access boundaries." },
+          { id: "cloud-sec-comp", name: "Cloud Security & Threat Modeling", level: 4, weight: 2, categoryLabel: "CORE", description: "Risk review, security controls, and incident readiness." },
+          { id: "browser-apis", name: "Application Security & Web Hardening", level: 4, weight: 2, categoryLabel: "CORE", description: "Input validation, XSS prevention, and secure frontend patterns." },
+          { id: "networking", name: "Networking & Operating Security", level: 3, weight: 1.5, categoryLabel: "IMPORTANT", description: "Firewalls, protocols, and defense patterns across systems." },
+          { id: "observability", name: "Threat Detection & Logs", level: 3, weight: 1.5, categoryLabel: "IMPORTANT", description: "Security telemetry and operational detection skills." },
+          { id: "cicd-pipelines", name: "Secure DevOps & Automation", level: 2, weight: 1, categoryLabel: "NICE-TO-HAVE", description: "Security checks embedded in delivery workflows." }
         ]
       },
       {
-        id: "ux-designer",
-        label: "UX/UI Product Designer",
-        icon: "🎨",
-        description: "Craft intuitive user journeys, establish design systems, validate prototypes, and ensure accessibility.",
+        id: "data-engineer",
+        label: "Data Engineer",
+        icon: "📦",
+        description: "Build reliable data pipelines, warehouses, and ingestion flows that support analytics and machine learning.",
         skills: [
-          {
-            id: "figma-systems",
-            name: "Figma Mastery & Design Systems",
-            level: 4,
-            weight: 2,
-            categoryLabel: "CORE",
-            description: "Tokens, Auto-Layout v5, component variants, component properties, and scalable library governance."
-          },
-          {
-            id: "ux-research-design",
-            name: "Usability Testing & UX Research",
-            level: 4,
-            weight: 2,
-            categoryLabel: "CORE",
-            description: "Tree testing, card sorting, unmoderated user tests, heuristic evaluation, and journey mapping."
-          },
-          {
-            id: "visual-design-ui",
-            name: "Visual Hierarchy & Typography",
-            level: 4,
-            weight: 2,
-            categoryLabel: "CORE",
-            description: "Type scales, optical balance, color theory, spacing tokens, and modern visual polish."
-          },
-          {
-            id: "interaction-motion",
-            name: "Interaction Design & Micro-Interactions",
-            level: 3,
-            weight: 1.5,
-            categoryLabel: "IMPORTANT",
-            description: "State transitions, animated affordances, tactile feedback, and interactive prototype flows."
-          },
-          {
-            id: "info-architecture",
-            name: "Information Architecture & User Flows",
-            level: 3,
-            weight: 1.5,
-            categoryLabel: "IMPORTANT",
-            description: "Site maps, navigational hierarchy, mental models, and edge-case error flow mapping."
-          },
-          {
-            id: "accessibility-wcag",
-            name: "Accessibility (WCAG 2.2 AA) & Inclusion",
-            level: 3,
-            weight: 1.5,
-            categoryLabel: "IMPORTANT",
-            description: "Color contrast ratios, keyboard focus rings, screen reader annotations, and tap target sizing."
-          },
-          {
-            id: "design-handoff",
-            name: "Design-to-Dev Handoff & Specs",
-            level: 3,
-            weight: 1,
-            categoryLabel: "NICE-TO-HAVE",
-            description: "Dev Mode documentation, responsive constraint specs, redlines, and asset export optimization."
-          }
+          { id: "sql-postgres", name: "SQL & Data Modeling", level: 4, weight: 2, categoryLabel: "CORE", description: "Schema design, joins, indexing, and efficient query patterns." },
+          { id: "server-runtime", name: "Data Pipeline Engineering", level: 4, weight: 2, categoryLabel: "CORE", description: "Batch and streaming data processing architecture." },
+          { id: "caching-redis", name: "Caching & Performance Optimization", level: 3, weight: 1.5, categoryLabel: "IMPORTANT", description: "Improving throughput and reducing processing bottlenecks." },
+          { id: "microservices-msg", name: "ETL / Streaming Workflows", level: 3, weight: 1.5, categoryLabel: "IMPORTANT", description: "Event-driven data movement and workflow orchestration." },
+          { id: "cloud-providers", name: "Cloud Data Platforms", level: 3, weight: 1.5, categoryLabel: "IMPORTANT", description: "Managed data services for storage and compute." },
+          { id: "observability", name: "Pipeline Monitoring & QA", level: 2, weight: 1, categoryLabel: "NICE-TO-HAVE", description: "Data quality checks and operational health tracking." }
         ]
+      },
+      {
+        id: "backend-software-engineer",
+        label: "Backend Software Engineer",
+        icon: "🧩",
+        description: "Build dependable APIs, service logic, and systems that handle scale, reliability, and maintainability.",
+        skills: [
+          { id: "server-runtime", name: "Server Runtime & Concurrency", level: 4, weight: 2, categoryLabel: "CORE", description: "Event-driven architecture and efficient resource management." },
+          { id: "api-design", name: "API Design & Contracts", level: 4, weight: 2, categoryLabel: "CORE", description: "Versioning, documentation, security, and resilience." },
+          { id: "sql-postgres", name: "Database Systems & Transactions", level: 4, weight: 2, categoryLabel: "CORE", description: "Schema design and correctness under concurrency." },
+          { id: "auth-security", name: "Authentication & Authorization", level: 3, weight: 1.5, categoryLabel: "IMPORTANT", description: "Secure access control, accounts, and API protection." },
+          { id: "microservices-msg", name: "Distributed Systems Patterns", level: 3, weight: 1.5, categoryLabel: "IMPORTANT", description: "Queueing, decoupling, and service-to-service reliability." },
+          { id: "docker-dev", name: "Containerized Delivery", level: 2, weight: 1, categoryLabel: "NICE-TO-HAVE", description: "Build packaging and deployment readiness." }
+        ]
+      },
+      {
+        id: "fullstack-developer",
+        label: "Full-Stack Developer",
+        icon: "🌐",
+        description: "Ship end-to-end product experiences across interfaces, APIs, and deployment workflows with product thinking.",
+        skills: [
+          { id: "js-ts", name: "Modern Frontend Engineering", level: 4, weight: 2, categoryLabel: "CORE", description: "Robust UI development and client-side patterns." },
+          { id: "react-next", name: "Frameworks & UI Architecture", level: 4, weight: 2, categoryLabel: "CORE", description: "Application structure, routing, and component composition." },
+          { id: "api-design", name: "API Layer & Data Contracts", level: 4, weight: 2, categoryLabel: "CORE", description: "Integration and service contracts for full product flows." },
+          { id: "sql-postgres", name: "Database Usage & Optimization", level: 3, weight: 1.5, categoryLabel: "IMPORTANT", description: "Data storage and efficient retrieval in production apps." },
+          { id: "testing-fe", name: "Testing & Quality Gates", level: 3, weight: 1.5, categoryLabel: "IMPORTANT", description: "Regression safety across app surfaces." },
+          { id: "deploy", name: "Deployment & DevOps Basics", level: 2, weight: 1, categoryLabel: "NICE-TO-HAVE", description: "Release pipelines and system operations readiness." }
+        ]
+      },
+      {
+        id: "mlops-engineer",
+        label: "MLOps Engineer",
+        icon: "🔧",
+        description: "Deploy, monitor, and maintain ML systems in production while ensuring scalability, governance, and reliability.",
+        skills: [
+          { id: "mlops-deploy", name: "Model Serving & Deployment", level: 4, weight: 2, categoryLabel: "CORE", description: "Reliable deployment of models into live systems." },
+          { id: "docker-k8s", name: "Kubernetes & Containers", level: 4, weight: 2, categoryLabel: "CORE", description: "Production orchestration and runtime support." },
+          { id: "cicd-pipelines", name: "CI/CD for ML Systems", level: 4, weight: 2, categoryLabel: "CORE", description: "Reproducible workflows and release practice." },
+          { id: "observability", name: "Monitoring, Drift & Alerting", level: 3, weight: 1.5, categoryLabel: "IMPORTANT", description: "Operational health and model performance monitoring." },
+          { id: "cloud-providers", name: "Cloud Infrastructure & Scalability", level: 3, weight: 1.5, categoryLabel: "IMPORTANT", description: "Distributed inference and service resiliency." },
+          { id: "feature-engineering", name: "Data & Feature Pipelines", level: 3, weight: 1, categoryLabel: "NICE-TO-HAVE", description: "Production-ready data preparation and inference quality." }
+        ]
+      },
+      {
+        id: "software-engineer-ai-skills",
+        label: "Software Engineer with AI Skills",
+        icon: "🧑‍💻",
+        description: "Build robust software products while integrating AI capabilities into real tools and user workflows.",
+        skills: [
+          { id: "js-ts", name: "Strong Core Engineering", level: 4, weight: 2, categoryLabel: "CORE", description: "Solid programming fundamentals and system design habits." },
+          { id: "api-design", name: "Service & API Integration", level: 4, weight: 2, categoryLabel: "CORE", description: "Connecting product logic with external systems and AI services." },
+          { id: "react-next", name: "Product UI Delivery", level: 3, weight: 1.5, categoryLabel: "IMPORTANT", description: "User-facing product implementation and interaction flows." },
+          { id: "machine-learning", name: "AI Feature Awareness", level: 3, weight: 1.5, categoryLabel: "IMPORTANT", description: "Practical knowledge of using ML in app products." },
+          { id: "testing-fe", name: "Reliable Delivery & QA", level: 3, weight: 1.5, categoryLabel: "IMPORTANT", description: "Testing for product confidence and sustainable releases." },
+          { id: "auth-security", name: "Secure Product Engineering", level: 2, weight: 1, categoryLabel: "NICE-TO-HAVE", description: "Safe integration and system protection practices." }
+        ]
+      },
+      {
+        id: "data-analyst",
+        label: "Data Analyst",
+        icon: "📈",
+        description: "Translate raw metrics into actionable insights, dashboards, and measurable business decisions.",
+        skills: [
+          { id: "sql-analytics", name: "SQL Analytics & Querying", level: 4, weight: 2, categoryLabel: "CORE", description: "Building accurate analytical queries for decision support." },
+          { id: "data-visualization", name: "Dashboarding & Storytelling", level: 4, weight: 2, categoryLabel: "CORE", description: "Turning metrics into understandable business narratives." },
+          { id: "python-datascience", name: "Python for Data Workflows", level: 3, weight: 1.5, categoryLabel: "IMPORTANT", description: "Data preparation and automation for insights." },
+          { id: "product-metrics", name: "KPI Design & Experimentation", level: 3, weight: 1.5, categoryLabel: "IMPORTANT", description: "Measuring product and business performance." },
+          { id: "machine-learning", name: "Forecasting & Predictive Signals", level: 2, weight: 1, categoryLabel: "NICE-TO-HAVE", description: "Basic forecasting and trend analysis capability." }
+        ]
+      },
+      {
+        id: "security-analyst",
+        label: "Security Analyst",
+        icon: "🛡️",
+        description: "Monitor signals, investigate incidents, and reduce exposure through review, tooling, and process improvement.",
+        skills: [
+          { id: "cloud-sec-comp", name: "Security Fundamentals", level: 4, weight: 2, categoryLabel: "CORE", description: "Threats, protections, and attack surface awareness." },
+          { id: "observability", name: "Security Monitoring & Logs", level: 4, weight: 2, categoryLabel: "CORE", description: "Detection workflows and operational review." },
+          { id: "auth-security", name: "Identity & Access Controls", level: 3, weight: 1.5, categoryLabel: "IMPORTANT", description: "How accounts and permissions reduce risk." },
+          { id: "browser-apis", name: "Web Security & Vulnerability Review", level: 3, weight: 1.5, categoryLabel: "IMPORTANT", description: "Understanding attack vectors and remediation." },
+          { id: "cicd-pipelines", name: "Secure DevOps Hygiene", level: 2, weight: 1, categoryLabel: "NICE-TO-HAVE", description: "Securing automation and delivery chains." }
+        ]
+      }
+    ];
+
+    const ROLE_GROUPS = [
+      {
+        slug: "ai-data",
+        title: "AI & Data",
+        roles: ["ai-ml-engineer", "generative-ai-engineer", "data-engineer", "data-analyst", "mlops-engineer"]
+      },
+      {
+        slug: "engineering-platform",
+        title: "Engineering & Platform",
+        roles: ["cloud-engineer", "devops-platform-engineer", "backend-software-engineer", "fullstack-developer", "software-engineer-ai-skills"]
+      },
+      {
+        slug: "security-product",
+        title: "Security & Product",
+        roles: ["cybersecurity-engineer", "security-analyst"]
       }
     ];
 
@@ -3243,26 +3125,36 @@
       }
     };
 
+    function buildYouTubeTopicUrl(topic) {
+      const query = encodeURIComponent(`${topic} tutorial`);
+      return `https://www.youtube.com/results?search_query=${query}`;
+    }
+
     /**
      * Resolves verified or safe-fallback resources for a skill
      */
     function getResourcesForSkill(skillId, skillName) {
-      if (CURATED_COURSE_MAP[skillId]) {
-        return CURATED_COURSE_MAP[skillId];
-      }
-      // Safe Fallback Tier 2: valid search query URLs
-      const encoded = encodeURIComponent(skillName);
-      return {
+      const base = CURATED_COURSE_MAP[skillId] || {
         free: {
-          title: `${skillName} Complete Interactive Tutorial`,
-          provider: "freeCodeCamp / YouTube Search",
-          url: `https://www.freecodecamp.org/news/?search=${encoded}`
+          title: `${skillName} Free Course`,
+          provider: "Free learning resource",
+          url: `https://www.freecodecamp.org/news/?search=${encodeURIComponent(skillName)}`
         },
         paid: {
           title: `${skillName} Professional Specialization`,
           provider: "Coursera Search",
-          url: `https://www.coursera.org/search?query=${encoded}`
+          url: `https://www.coursera.org/search?query=${encodeURIComponent(skillName)}`
         }
+      };
+
+      return {
+        free: base.free,
+        youtube: base.youtube || {
+          title: `${skillName} YouTube Tutorial`,
+          provider: "YouTube Search",
+          url: buildYouTubeTopicUrl(skillName)
+        },
+        paid: base.paid
       };
     }
 
@@ -3271,6 +3163,7 @@
        ========================================================================== */
     const state = {
       selectedRoleId: null,
+      showAllRoles: false,
       userRatings: {},     // { [skillId]: number 0-5 }
       extraSkills: [],     // string[] (excluded from role scoring)
       roadmap: {},         // { [key]: { id, skillId, skillName, courseTitle, provider, url, type, hours, done: boolean } }
@@ -3321,7 +3214,10 @@
 
     function renderRoleGrid() {
       const grid = document.getElementById("rolesGrid");
-      grid.innerHTML = ROLES_DATA.map(role => `
+      const visibleRoles = state.showAllRoles ? ROLES_DATA : ROLES_DATA.slice(0, 8);
+      const hiddenRoles = ROLES_DATA.slice(8);
+
+      const cards = visibleRoles.map(role => `
         <div class="role-card ${state.selectedRoleId === role.id ? 'selected' : ''}" 
              onclick="selectRole('${role.id}')" 
              id="roleCard-${role.id}"
@@ -3334,6 +3230,21 @@
           <div class="role-card-skills-count">⚡ ${role.skills.length} Industry Benchmarked Skills</div>
         </div>
       `).join("");
+
+      const moreCard = hiddenRoles.length > 0 ? `
+        <div class="role-card more-card" onclick="toggleMoreRoles()" role="button" tabindex="0" onkeydown="if(event.key==='Enter'||event.key===' ') toggleMoreRoles()">
+          <div class="role-card-icon">${state.showAllRoles ? '↩️' : '🔍'}</div>
+          <div class="role-card-title">${state.showAllRoles ? 'Show Less' : 'More'}</div>
+          <div class="role-card-meta">${state.showAllRoles ? 'Hide extra roles' : `+${hiddenRoles.length} more roles`}</div>
+        </div>
+      ` : "";
+
+      grid.innerHTML = cards + moreCard;
+    }
+
+    function toggleMoreRoles() {
+      state.showAllRoles = !state.showAllRoles;
+      renderRoleGrid();
     }
 
     function selectRole(roleId) {
@@ -3781,18 +3692,18 @@
       let recommendationsHTML = "";
       if (!isMatched && skill.resources) {
         const freeKey = `${skill.id}::free`;
+        const youtubeKey = `${skill.id}::youtube`;
         const paidKey = `${skill.id}::paid`;
         const isFreeInRoadmap = !!state.roadmap[freeKey];
+        const isYoutubeInRoadmap = !!state.roadmap[youtubeKey];
         const isPaidInRoadmap = !!state.roadmap[paidKey];
 
         recommendationsHTML = `
           <div class="course-recommendations-row">
-            
-            <!-- FREE COURSE PILL (Clean Emerald Badge) -->
             <div class="course-pill-card free-card">
               <div class="course-top-info">
                 <div class="course-badge-row">
-                  <span class="course-type-badge free">FREE RESOURCE</span>
+                  <span class="course-type-badge free">FREE</span>
                   <span class="course-source-tag">${escapeHTML(skill.resources.free.provider)}</span>
                 </div>
                 <a href="${skill.resources.free.url}" target="_blank" rel="noopener noreferrer" class="course-link-title">
@@ -3807,11 +3718,28 @@
               </button>
             </div>
 
-            <!-- PAID COURSE PILL (LUXURY GOLD LIGHTING BACKGROUND & BADGE) -->
+            <div class="course-pill-card youtube-card">
+              <div class="course-top-info">
+                <div class="course-badge-row">
+                  <span class="course-type-badge free">▶ YOUTUBE</span>
+                  <span class="course-source-tag">${escapeHTML(skill.resources.youtube.provider)}</span>
+                </div>
+                <a href="${skill.resources.youtube.url}" target="_blank" rel="noopener noreferrer" class="course-link-title">
+                  <span>${escapeHTML(skill.resources.youtube.title)}</span>
+                  <span class="ext-icon">↗</span>
+                </a>
+              </div>
+              <button class="btn-roadmap-toggle ${isYoutubeInRoadmap ? 'in-roadmap' : ''}" 
+                      onclick="toggleRoadmapItem('${skill.id}', 'youtube')" 
+                      id="btnRoadmap-${skill.id}-youtube">
+                ${isYoutubeInRoadmap ? '✓ In Roadmap' : '+ Add to Roadmap'}
+              </button>
+            </div>
+
             <div class="course-pill-card paid-gold-card">
               <div class="course-top-info">
                 <div class="course-badge-row">
-                  <span class="course-type-badge paid">⭐ PAID COURSE / CERT</span>
+                  <span class="course-type-badge paid">⭐ PAID</span>
                   <span class="course-source-tag">${escapeHTML(skill.resources.paid.provider)}</span>
                 </div>
                 <a href="${skill.resources.paid.url}" target="_blank" rel="noopener noreferrer" class="course-link-title">
@@ -3825,7 +3753,6 @@
                 ${isPaidInRoadmap ? '✓ In Roadmap' : '+ Add to Roadmap'}
               </button>
             </div>
-
           </div>
         `;
       } else if (isMatched) {
@@ -3894,7 +3821,7 @@
       if (!skill) return;
 
       const resources = getResourcesForSkill(skill.id, skill.name);
-      const res = type === "free" ? resources.free : resources.paid;
+      const res = type === "free" ? resources.free : type === "youtube" ? resources.youtube : resources.paid;
 
       if (state.roadmap[key]) {
         // Remove
