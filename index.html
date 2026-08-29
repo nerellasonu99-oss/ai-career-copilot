@@ -68,6 +68,12 @@
       --text-muted: #64748b;           /* Slate 500 */
       --text-inverse: #ffffff;
 
+      /* Role atmosphere (updated when a target role is selected) */
+      --role-glow-a: #c7d2fe;
+      --role-glow-b: #fce7f3;
+      --role-glow-c: #ccfbf1;
+      --role-accent-glow: rgba(79, 70, 229, 0.22);
+
       /* Shadows & Radii */
       --radius-sm: 8px;
       --radius-md: 12px;
@@ -105,6 +111,178 @@
       overflow-x: hidden;
       position: relative;
       padding-bottom: 80px;
+    }
+
+    .auth-shell {
+      position: fixed;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: radial-gradient(circle at top left, rgba(79, 70, 229, 0.12), transparent 35%), linear-gradient(135deg, #f8fafc 0%, #eef6ff 45%, #f9fafb 100%);
+      z-index: 50;
+      padding: 24px;
+    }
+
+    .auth-shell.hidden {
+      display: none;
+    }
+
+    .auth-shell-inner {
+      width: min(460px, 100%);
+      background: rgba(255, 255, 255, 0.84);
+      border: 1px solid rgba(148, 163, 184, 0.35);
+      border-radius: 28px;
+      box-shadow: 0 30px 80px -30px rgba(79, 70, 229, 0.35);
+      backdrop-filter: blur(14px);
+      padding: 28px 24px 24px;
+    }
+
+    .auth-brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 18px;
+    }
+
+    .auth-brand-mark {
+      width: 46px;
+      height: 46px;
+      border-radius: 14px;
+      display: grid;
+      place-items: center;
+      font-size: 1.4rem;
+      background: linear-gradient(135deg, #4f46e5, #38bdf8);
+      color: white;
+      box-shadow: 0 20px 30px -12px rgba(79, 70, 229, 0.7);
+    }
+
+    .auth-brand-title {
+      font-size: 1.2rem;
+      font-weight: 800;
+      color: #0f172a;
+    }
+
+    .auth-brand-subtitle {
+      font-size: 0.72rem;
+      color: var(--text-muted);
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .auth-form-box {
+      border: 1px solid rgba(203, 213, 225, 0.8);
+      background: rgba(248, 250, 252, 0.9);
+      border-radius: 20px;
+      padding: 18px;
+    }
+
+    .auth-toggle-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      background: rgba(226, 232, 240, 0.8);
+      border-radius: 12px;
+      padding: 5px;
+      margin-bottom: 18px;
+    }
+
+    .auth-toggle-btn {
+      border: none;
+      background: transparent;
+      color: var(--text-secondary);
+      font-weight: 800;
+      padding: 10px 12px;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: all var(--transition-fast);
+    }
+
+    .auth-toggle-btn.active {
+      background: #ffffff;
+      color: #1d4ed8;
+      box-shadow: 0 3px 10px rgba(15, 23, 42, 0.08);
+    }
+
+    .auth-form {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .auth-field {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .auth-field label {
+      font-size: 0.75rem;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--text-secondary);
+    }
+
+    .auth-field input {
+      width: 100%;
+      border-radius: 12px;
+      border: 1px solid #cbd5e1;
+      padding: 12px 14px;
+      background: #ffffff;
+      font-size: 0.96rem;
+      color: #0f172a;
+      outline: none;
+      transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+    }
+
+    .auth-field input:focus {
+      border-color: #60a5fa;
+      box-shadow: 0 0 0 4px rgba(96, 165, 250, 0.12);
+    }
+
+    .auth-submit {
+      margin-top: 8px;
+      border: none;
+      border-radius: 12px;
+      background: linear-gradient(135deg, #4f46e5 0%, #0284c7 100%);
+      color: white;
+      font-size: 0.96rem;
+      font-weight: 800;
+      padding: 14px 16px;
+      cursor: pointer;
+      box-shadow: 0 18px 30px -14px rgba(79, 70, 229, 0.8);
+      transition: transform var(--transition-fast), box-shadow var(--transition-fast);
+    }
+
+    .auth-submit:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 22px 34px -16px rgba(79, 70, 229, 0.9);
+    }
+
+    .auth-status {
+      min-height: 22px;
+      margin-bottom: 10px;
+      font-size: 0.82rem;
+      font-weight: 700;
+      color: #475569;
+    }
+
+    .auth-status.error {
+      color: #b91c1c;
+    }
+
+    .auth-status.success {
+      color: #166534;
+    }
+
+    .analyzer-workspace {
+      display: none;
+    }
+
+    .analyzer-workspace.visible {
+      display: flex;
     }
 
     /* Confetti Canvas */
@@ -186,18 +364,35 @@
       overflow: hidden;
     }
 
+    .role-atmosphere {
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(ellipse 62% 48% at 88% 8%, var(--role-accent-glow), transparent 58%),
+        radial-gradient(ellipse 46% 38% at 6% 92%, color-mix(in srgb, var(--role-glow-c) 55%, transparent), transparent 62%);
+      opacity: 0.9;
+      transition: background 0.7s ease, opacity 0.7s ease;
+    }
+
+    .ambient-parallax {
+      position: absolute;
+      inset: -40px;
+      will-change: transform;
+    }
+
     .ambient-orb {
       position: absolute;
       border-radius: 50%;
       filter: blur(100px);
       opacity: 0.45;
       will-change: transform;
+      transition: background 0.8s ease;
     }
 
     .orb-1 {
       width: 650px;
       height: 650px;
-      background: radial-gradient(circle, #e0e7ff 0%, #c7d2fe 70%, transparent 100%);
+      background: radial-gradient(circle, color-mix(in srgb, var(--role-glow-a) 70%, #ffffff) 0%, var(--role-glow-a) 70%, transparent 100%);
       top: -160px;
       left: -120px;
       animation: driftOne 24s ease-in-out infinite alternate;
@@ -206,7 +401,7 @@
     .orb-2 {
       width: 580px;
       height: 580px;
-      background: radial-gradient(circle, #fce7f3 0%, #ede9fe 70%, transparent 100%);
+      background: radial-gradient(circle, var(--role-glow-b) 0%, color-mix(in srgb, var(--role-glow-b) 55%, #ede9fe) 70%, transparent 100%);
       bottom: -160px;
       right: -120px;
       animation: driftTwo 28s ease-in-out infinite alternate;
@@ -215,7 +410,7 @@
     .orb-3 {
       width: 480px;
       height: 480px;
-      background: radial-gradient(circle, #ccfbf1 0%, #e0f2fe 70%, transparent 100%);
+      background: radial-gradient(circle, var(--role-glow-c) 0%, #e0f2fe 70%, transparent 100%);
       top: 35%;
       left: 50%;
       transform: translate(-50%, -50%);
@@ -248,7 +443,7 @@
       z-index: 1;
       max-width: 1280px;
       margin: 0 auto;
-      padding: 28px 24px;
+      padding: 28px 24px 40px;
     }
 
     .header-nav {
@@ -256,7 +451,7 @@
       align-items: center;
       justify-content: space-between;
       padding: 14px 24px;
-      background: rgba(255, 255, 255, 0.92);
+      background: rgba(255, 255, 255, 0.94);
       backdrop-filter: var(--glass-blur);
       -webkit-backdrop-filter: var(--glass-blur);
       border: 1px solid rgba(226, 232, 240, 0.9);
@@ -264,8 +459,10 @@
       margin-bottom: 28px;
       box-shadow: 0 4px 16px -2px rgba(15, 23, 42, 0.05);
       animation: fadeInDown 0.6s ease-out;
-      position: relative;
-      overflow: hidden;
+      position: sticky;
+      top: 12px;
+      z-index: 40;
+      overflow: visible;
     }
 
     /* Blue-silver highlight sheen across header */
@@ -348,7 +545,266 @@
     .header-actions {
       display: flex;
       align-items: center;
-      gap: 14px;
+      gap: 10px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+      position: relative;
+      z-index: 60;
+    }
+
+    .menu-button {
+      position: relative;
+      z-index: 70;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 38px;
+      height: 38px;
+      border-radius: 12px;
+      border: 1px solid #dbeafe;
+      background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+      color: #1e293b;
+      cursor: pointer;
+      box-shadow: 0 6px 16px rgba(15, 23, 42, 0.06);
+      transition: var(--transition-fast);
+      padding: 0;
+    }
+
+    .menu-button:hover {
+      border-color: #c7d2fe;
+      transform: translateY(-1px);
+    }
+
+    .menu-button span {
+      display: block;
+      width: 18px;
+      height: 2px;
+      background: #334155;
+      border-radius: 99px;
+      position: relative;
+    }
+
+    .menu-button span::before,
+    .menu-button span::after {
+      content: "";
+      position: absolute;
+      left: 0;
+      width: 18px;
+      height: 2px;
+      background: #334155;
+      border-radius: 99px;
+    }
+
+    .menu-button span::before { top: -6px; }
+    .menu-button span::after { top: 6px; }
+
+    .menu-panel {
+      position: absolute;
+      top: calc(100% + 8px);
+      right: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      min-width: 180px;
+      padding: 10px;
+      border-radius: 16px;
+      border: 1px solid #e2e8f0;
+      background: rgba(255,255,255,0.96);
+      backdrop-filter: blur(8px);
+      box-shadow: 0 18px 40px rgba(15, 23, 42, 0.12);
+      z-index: 120;
+    }
+
+    .menu-panel.hidden {
+      display: none;
+    }
+
+    .menu-action {
+      width: 100%;
+      text-align: left;
+      padding: 9px 12px;
+      border: 1px solid transparent;
+      border-radius: 10px;
+      background: #f8fafc;
+      color: #0f172a;
+      font-family: var(--font-display);
+      font-size: 0.8rem;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .menu-action:hover {
+      background: #eef2ff;
+      border-color: #c7d2fe;
+      color: #3730a3;
+    }
+
+    .api-status-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      padding: 6px 12px;
+      border-radius: var(--radius-pill);
+      font-size: 0.75rem;
+      font-weight: 800;
+      font-family: var(--font-mono);
+      border: 1px solid #cbd5e1;
+      background: #f8fafc;
+      color: #475569;
+      cursor: pointer;
+    }
+
+    .api-status-badge .status-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: #94a3b8;
+    }
+
+    .api-status-badge.is-live {
+      background: #ecfdf5;
+      border-color: #a7f3d0;
+      color: #065f46;
+    }
+
+    .api-status-badge.is-live .status-dot {
+      background: #10b981;
+      box-shadow: 0 0 6px #10b981;
+    }
+
+    .api-status-badge.is-down {
+      background: #fff1f2;
+      border-color: #fecdd3;
+      color: #9f1239;
+    }
+
+    .api-status-badge.is-down .status-dot {
+      background: #e11d48;
+    }
+
+    .btn-header-ghost {
+      padding: 6px 12px;
+      border-radius: var(--radius-pill);
+      border: 1px solid #e2e8f0;
+      background: #ffffff;
+      color: #334155;
+      font-size: 0.8rem;
+      font-weight: 700;
+      cursor: pointer;
+      font-family: var(--font-display);
+    }
+
+    .btn-header-ghost:hover {
+      border-color: #c7d2fe;
+      color: #4338ca;
+    }
+
+    .auth-user-chip {
+      display: none;
+      align-items: center;
+      gap: 8px;
+      padding: 5px 10px 5px 12px;
+      background: #eef2ff;
+      border: 1px solid #c7d2fe;
+      border-radius: var(--radius-pill);
+      font-size: 0.78rem;
+      font-weight: 700;
+      color: #3730a3;
+    }
+
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.45);
+      z-index: 80;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .modal-overlay.open {
+      display: flex;
+    }
+
+    .modal-card {
+      width: min(440px, 100%);
+      background: #ffffff;
+      border-radius: var(--radius-xl);
+      border: 1px solid #e2e8f0;
+      box-shadow: var(--shadow-lg);
+      padding: 24px;
+    }
+
+    .modal-card h3 {
+      font-size: 1.15rem;
+      margin-bottom: 6px;
+    }
+
+    .modal-card p.modal-lead {
+      font-size: 0.88rem;
+      color: var(--text-secondary);
+      margin-bottom: 16px;
+    }
+
+    .modal-field {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      margin-bottom: 12px;
+    }
+
+    .modal-field label {
+      font-size: 0.75rem;
+      font-weight: 800;
+      color: #64748b;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    .modal-field input {
+      padding: 10px 12px;
+      border: 1px solid #e2e8f0;
+      border-radius: var(--radius-md);
+      font-family: var(--font-display);
+      font-size: 0.95rem;
+    }
+
+    .modal-error {
+      color: #be123c;
+      font-size: 0.82rem;
+      min-height: 1.1em;
+      margin-bottom: 8px;
+    }
+
+    .modal-actions {
+      display: flex;
+      gap: 8px;
+      margin-top: 8px;
+    }
+
+    .stack-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      font-size: 0.9rem;
+      color: #334155;
+    }
+
+    .stack-list li {
+      padding: 8px 10px;
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 10px;
+    }
+
+    .stack-routes {
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      color: #475569;
+      margin-top: 12px;
+      line-height: 1.7;
     }
 
     .brand-tag {
@@ -513,6 +969,10 @@
       animation: fadeInRight 0.8s ease-out;
     }
 
+    .hero-3d-parallax {
+      will-change: transform;
+    }
+
     @keyframes fadeInRight {
       from { opacity: 0; transform: translateX(20px); }
       to { opacity: 1; transform: translateX(0); }
@@ -532,7 +992,7 @@
     }
 
     .hero-3d-card:hover {
-      box-shadow: 0 30px 60px -10px rgba(15, 23, 42, 0.35), 0 0 40px rgba(56, 189, 248, 0.3);
+      box-shadow: 0 30px 60px -10px rgba(15, 23, 42, 0.35), 0 0 42px var(--role-accent-glow);
     }
 
     .hero-image-wrapper {
@@ -2093,6 +2553,10 @@
         animation: none !important;
         opacity: 0.2 !important;
       }
+      .ambient-parallax,
+      .hero-3d-parallax {
+        transform: none !important;
+      }
       .floating-hud-badge,
       .screen-light-wave::after,
       .course-pill-card.paid-gold-card::before {
@@ -2109,14 +2573,17 @@
   <!-- Confetti Celebration Canvas -->
   <canvas id="confettiCanvas"></canvas>
 
-  <!-- Ambient background motion (Light Watercolor Glows) -->
+  <!-- Ambient background motion (role-tinted glows + mouse parallax) -->
   <div class="ambient-canvas" aria-hidden="true">
-    <div class="ambient-orb orb-1"></div>
-    <div class="ambient-orb orb-2"></div>
-    <div class="ambient-orb orb-3"></div>
+    <div class="role-atmosphere" id="roleAtmosphere"></div>
+    <div class="ambient-parallax" id="ambientParallax">
+      <div class="ambient-orb orb-1"></div>
+      <div class="ambient-orb orb-2"></div>
+      <div class="ambient-orb orb-3"></div>
+    </div>
   </div>
 
-  <div class="app-container">
+  <div class="app-container" id="pageTop">
     
     <!-- Top Navigation with Custom Vector Theme Logo -->
     <header class="header-nav">
@@ -2172,12 +2639,54 @@
       </div>
 
       <div class="header-actions">
+        <button type="button" class="menu-button" id="menuButton" aria-label="Open menu" onclick="toggleHeaderMenu()">
+          <span></span>
+        </button>
+
+        <div class="menu-panel hidden" id="headerMenu" aria-label="Header menu">
+          <button type="button" class="menu-action" onclick="goHome()">Home</button>
+          <button type="button" class="menu-action" onclick="scrollToRoadmap()">Roadmap</button>
+          <button type="button" class="menu-action" id="menuSignInAction" onclick="openAuthModal(); closeHeaderMenu();">Sign in</button>
+          <button type="button" class="menu-action" id="menuLogoutAction" onclick="logoutUser(); closeHeaderMenu();" style="display:none;">Logout</button>
+        </div>
+
+        <div class="auth-user-chip" id="authUserChip">
+          <span id="authUserName">Guest</span>
+          <button type="button" class="btn-header-ghost" style="padding: 2px 8px; font-size: 0.72rem;" onclick="logoutUser()">Out</button>
+        </div>
+        <button type="button" class="btn-header-ghost" id="btnAuthOpen" onclick="openAuthModal()">Sign in</button>
         <button id="navRoadmapTrigger" class="roadmap-trigger-badge" style="display: none;" onclick="scrollToRoadmap()">
           <span>🗺️ Roadmap</span>
           <span id="navRoadmapCount">(0)</span>
         </button>
       </div>
     </header>
+
+    <div class="modal-overlay" id="authModal" onclick="if(event.target===this)closeAuthModal()">
+      <div class="modal-card" role="dialog" aria-labelledby="authModalTitle">
+        <h3 id="authModalTitle">Cloud profile</h3>
+        <p class="modal-lead">Save ratings and roadmap to MongoDB so a refresh does not wipe the session.</p>
+        <div class="modal-field" id="authModalNameField">
+          <label for="authModalName">Name</label>
+          <input id="authModalName" type="text" autocomplete="name" placeholder="Your name">
+        </div>
+        <div class="modal-field">
+          <label for="authEmail">Email</label>
+          <input id="authEmail" type="email" autocomplete="email" placeholder="you@example.com">
+        </div>
+        <div class="modal-field">
+          <label for="authPassword">Password</label>
+          <input id="authPassword" type="password" autocomplete="current-password" placeholder="Enter your password">
+        </div>
+        <div class="modal-error" id="authError"></div>
+        <div class="modal-actions">
+          <button type="button" class="btn-primary-large" style="flex:1; padding: 12px;" onclick="submitAuth('login')">Log in</button>
+          <button type="button" class="btn-secondary" style="flex:1;" onclick="submitAuth('signup')">Sign up</button>
+        </div>
+        <p class="modal-lead" style="margin: 12px 0 0;">Use your own account credentials to continue.</p>
+        <button type="button" class="btn-header-ghost" style="margin-top: 12px;" onclick="closeAuthModal()">Close</button>
+      </div>
+    </div>
 
     <!-- Hero Banner with 3D Job-Ready Software Workspace Showcase -->
     <section class="hero-banner">
@@ -2206,6 +2715,7 @@
 
       <!-- Right Column: 3D Interactive Software Office & Job-Ready Avatar Showcase -->
       <div class="hero-3d-container">
+        <div class="hero-3d-parallax" id="heroParallax">
         <div class="hero-3d-card" id="hero3DCard">
           
           <!-- Floating 3D Holographic Badges -->
@@ -2229,9 +2739,50 @@
           </div>
 
         </div>
+        </div>
       </div>
 
     </section>
+
+    <div class="auth-shell hidden" id="authShell">
+      <div class="auth-shell-inner">
+        <div class="auth-brand">
+          <div class="auth-brand-mark">🚀</div>
+          <div>
+            <div class="auth-brand-title">AI Career Copilot</div>
+            <div class="auth-brand-subtitle">Secure Access</div>
+          </div>
+        </div>
+
+        <div class="auth-form-box">
+          <div class="auth-toggle-row">
+            <button class="auth-toggle-btn active" data-mode="login" type="button">Login</button>
+            <button class="auth-toggle-btn" data-mode="signup" type="button">Sign Up</button>
+          </div>
+
+          <div class="auth-status" id="authStatus">Use your email and password to continue.</div>
+
+          <form class="auth-form" id="authForm">
+            <div class="auth-field" id="authShellNameField" style="display: none;">
+              <label for="authShellName">Full Name</label>
+              <input id="authShellName" name="name" type="text" placeholder="Enter your full name" autocomplete="name">
+            </div>
+
+            <div class="auth-field">
+              <label for="authShellEmail">Email</label>
+              <input id="authShellEmail" name="email" type="email" placeholder="you@example.com" autocomplete="email" required>
+            </div>
+
+            <div class="auth-field">
+              <label for="authShellPassword">Password</label>
+              <input id="authShellPassword" name="password" type="password" placeholder="Enter your password" autocomplete="current-password" required>
+            </div>
+
+            <button type="submit" class="auth-submit" id="authSubmitBtn">Sign In</button>
+          </form>
+        </div>
+      </div>
+    </div>
 
     <!-- Main Workspace -->
     <main class="analyzer-workspace" id="analyzerWorkspace">
@@ -2401,7 +2952,7 @@
           </div>
 
           <div class="roadmap-footer-notice">
-            <span>💡 <em>Prototype Session State:</em> Roadmap changes are actively tracked in memory. Hooking up user authentication in production syncs this roadmap to your persistent database profile.</span>
+            <span id="roadmapSyncNotice">💡 Guest mode: roadmap stays in this tab. Sign in to persist it in MongoDB.</span>
           </div>
         </div>
       </aside>
@@ -3162,6 +3713,7 @@
        3. APP STATE MANAGEMENT (IN-MEMORY)
        ========================================================================== */
     const state = {
+      isAuthenticated: false,
       selectedRoleId: null,
       showAllRoles: false,
       userRatings: {},     // { [skillId]: number 0-5 }
@@ -3179,20 +3731,401 @@
       "5: Expert / Master"
     ];
 
+    const AUTH_TOKEN_KEY = "acc_auth_token";
+    const API_BASE = (function resolveApiBase() {
+      if (location.protocol === "file:") return "http://localhost:5000";
+      if (location.port === "5000") return "";
+      return `${location.protocol}//${location.hostname}:5000`;
+    })();
+
+    const backend = {
+      live: false,
+      health: null,
+      token: localStorage.getItem(AUTH_TOKEN_KEY) || "",
+      user: null,
+      hydrating: false,
+      saveTimer: null
+    };
+
+    function apiUrl(path) {
+      return `${API_BASE}${path}`;
+    }
+
+    async function apiFetch(path, options = {}) {
+      const headers = Object.assign({ "Content-Type": "application/json" }, options.headers || {});
+      if (backend.token) headers.Authorization = `Bearer ${backend.token}`;
+      const response = await fetch(apiUrl(path), Object.assign({}, options, { headers }));
+      const data = await response.json().catch(() => ({}));
+      if (!response.ok) {
+        throw new Error(data.message || `Request failed (${response.status})`);
+      }
+      return data;
+    }
+
+    function toggleHeaderMenu() {
+      const menu = document.getElementById("headerMenu");
+      if (!menu) return;
+      menu.classList.toggle("hidden");
+    }
+
+    function closeHeaderMenu() {
+      const menu = document.getElementById("headerMenu");
+      if (menu) menu.classList.add("hidden");
+    }
+
+    function goHome() {
+      const top = document.getElementById("pageTop");
+      if (top) {
+        top.scrollIntoView({ behavior: "smooth", block: "start" });
+      } else {
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      }
+      closeHeaderMenu();
+    }
+
+    document.addEventListener("click", (event) => {
+      const menu = document.getElementById("headerMenu");
+      const button = document.getElementById("menuButton");
+      if (!menu || !button) return;
+      if (!menu.contains(event.target) && !button.contains(event.target)) {
+        menu.classList.add("hidden");
+      }
+    });
+
+    function updateAuthChrome() {
+      const chip = document.getElementById("authUserChip");
+      const nameEl = document.getElementById("authUserName");
+      const authBtn = document.getElementById("btnAuthOpen");
+      const menuSignInAction = document.getElementById("menuSignInAction");
+      const menuLogoutAction = document.getElementById("menuLogoutAction");
+      const notice = document.getElementById("roadmapSyncNotice");
+      const signedIn = !!(backend.user && backend.token);
+      if (chip) chip.style.display = signedIn ? "inline-flex" : "none";
+      if (authBtn) authBtn.style.display = signedIn ? "none" : "inline-flex";
+      if (menuSignInAction) menuSignInAction.style.display = signedIn ? "none" : "block";
+      if (menuLogoutAction) menuLogoutAction.style.display = signedIn ? "block" : "none";
+      if (nameEl && backend.user) nameEl.textContent = backend.user.name;
+      if (notice) {
+        notice.textContent = signedIn
+          ? `☁️ Signed in as ${backend.user.email}. Role, ratings, and roadmap sync to MongoDB.`
+          : "💡 Guest mode: roadmap stays in this tab. Sign in to persist it in MongoDB.";
+      }
+    }
+
+    function openAuthModal() {
+      document.getElementById("authModal").classList.add("open");
+      document.getElementById("authShell")?.classList.add("hidden");
+    }
+
+    function closeAuthModal() {
+      document.getElementById("authModal").classList.remove("open");
+    }
+
+    function startDemoMode() {
+      const demoRole = ROLES_DATA.find(role => role.id === "fullstack-developer") || ROLES_DATA[0];
+      const demoRatings = {};
+
+      backend.user = {
+        name: "Demo User",
+        email: "demo@ai-career-copilot.dev"
+      };
+      backend.token = "demo-session-token";
+      localStorage.setItem(AUTH_TOKEN_KEY, backend.token);
+
+      state.selectedRoleId = demoRole.id;
+      state.extraSkills = ["Product thinking", "Communication", "SQL"];
+      state.roadmap = {};
+
+      demoRole.skills.forEach((skill, index) => {
+        const preset = Math.min(5, Math.max(1, (index % 4) + 2));
+        demoRatings[skill.id] = preset;
+      });
+
+      state.userRatings = demoRatings;
+      applyRoleAtmosphere(demoRole.id);
+      renderRoleGrid();
+      selectRole(demoRole.id);
+      renderExtraSkills();
+      document.getElementById('authShell')?.classList.add('hidden');
+      document.getElementById('analyzerWorkspace')?.classList.add('visible');
+      document.getElementById('authModal')?.classList.remove('open');
+      closeHeaderMenu();
+      updateAuthChrome();
+
+      setTimeout(() => {
+        const skillsPanel = document.getElementById('selfRatingPanel');
+        if (skillsPanel) skillsPanel.style.display = 'block';
+
+        const demoSkillIds = demoRole.skills.slice(0, 3).map(skill => skill.id);
+        demoSkillIds.forEach((skillId, index) => {
+          const type = ["free", "youtube", "paid"][index % 3];
+          toggleRoadmapItem(skillId, type);
+        });
+
+        analyzeGaps();
+      }, 120);
+    }
+
+    async function pingBackend() {
+      try {
+        const started = performance.now();
+        const health = await apiFetch("/api/health");
+        const ms = Math.round(performance.now() - started);
+        backend.live = true;
+        backend.health = health;
+        return true;
+      } catch (error) {
+        backend.live = false;
+        backend.health = null;
+        return false;
+      }
+    }
+
+    function applyServerProfile(user) {
+      backend.hydrating = true;
+      backend.user = user;
+      const ratings = user.skillRatings || {};
+      state.userRatings = (ratings && typeof ratings === "object" && !Array.isArray(ratings))
+        ? Object.assign({}, ratings)
+        : {};
+      state.extraSkills = Array.isArray(user.extraSkills) ? user.extraSkills.slice() : [];
+      state.roadmap = {};
+      (user.roadmap || []).forEach((item) => {
+        if (item && item.id) state.roadmap[item.id] = item;
+      });
+      const roleId = user.selectedRoleId || ROLES_DATA[0].id;
+      selectRole(roleId);
+      renderExtraSkills();
+      updateRoadmapUI();
+      backend.hydrating = false;
+      updateAuthChrome();
+    }
+
+    function scheduleProfileSave() {
+      if (backend.hydrating || !backend.token || !backend.live) return;
+      clearTimeout(backend.saveTimer);
+      backend.saveTimer = setTimeout(saveProfileNow, 700);
+    }
+
+    async function saveProfileNow() {
+      if (!backend.token || !backend.live) return;
+      try {
+        await apiFetch("/api/profile/save", {
+          method: "PUT",
+          body: JSON.stringify({
+            selectedRoleId: state.selectedRoleId || "",
+            skillRatings: state.userRatings,
+            extraSkills: state.extraSkills,
+            roadmap: Object.values(state.roadmap)
+          })
+        });
+      } catch (error) {
+        console.warn("Profile save skipped:", error.message);
+      }
+    }
+
+    async function restoreSession() {
+      if (!backend.token) {
+        updateAuthChrome();
+        document.getElementById('authShell')?.classList.remove('hidden');
+        document.getElementById('analyzerWorkspace')?.classList.remove('visible');
+        return;
+      }
+      try {
+        const data = await apiFetch("/api/auth/me");
+        applyServerProfile(data.user);
+        document.getElementById('authShell')?.classList.add('hidden');
+        document.getElementById('analyzerWorkspace')?.classList.add('visible');
+      } catch (error) {
+        backend.token = "";
+        localStorage.removeItem(AUTH_TOKEN_KEY);
+        document.getElementById('authShell')?.classList.remove('hidden');
+        document.getElementById('analyzerWorkspace')?.classList.remove('visible');
+        updateAuthChrome();
+      }
+    }
+
+    async function submitAuth(mode) {
+      const name = document.getElementById("authModalName").value.trim();
+      const email = document.getElementById("authEmail").value.trim();
+      const password = document.getElementById("authPassword").value;
+      const errorEl = document.getElementById("authError");
+      errorEl.textContent = "";
+
+      try {
+        const path = mode === "signup" ? "/api/auth/signup" : "/api/auth/login";
+        const payload = mode === "signup" ? { name: name || "Copilot user", email, password } : { email, password };
+        const data = await apiFetch(path, { method: "POST", body: JSON.stringify(payload) });
+        backend.token = data.token;
+        localStorage.setItem(AUTH_TOKEN_KEY, data.token);
+        applyServerProfile(data.user);
+        await saveProfileNow();
+        closeAuthModal();
+      } catch (error) {
+        errorEl.textContent = error.message;
+      }
+    }
+
+    function logoutUser() {
+      backend.token = "";
+      backend.user = null;
+      localStorage.removeItem(AUTH_TOKEN_KEY);
+      updateAuthChrome();
+      document.getElementById('authShell')?.classList.add('hidden');
+      document.getElementById('analyzerWorkspace')?.classList.add('visible');
+    }
+
+    function setAuthPageMode(mode) {
+      const authNameField = document.getElementById('authShellNameField');
+      const toggleButtons = document.querySelectorAll('.auth-toggle-btn');
+      const submitButton = document.getElementById('authSubmitBtn');
+      const isSignup = mode === 'signup';
+
+      if (authNameField) authNameField.style.display = isSignup ? 'flex' : 'none';
+      if (submitButton) submitButton.textContent = isSignup ? 'Create Account' : 'Sign In';
+      toggleButtons.forEach((button) => {
+        button.classList.toggle('active', button.dataset.mode === mode);
+      });
+    }
+
+    async function handleAuthShellSubmit(event) {
+      event.preventDefault();
+      const mode = document.querySelector('.auth-toggle-btn.active')?.dataset.mode || 'login';
+      const name = document.getElementById('authShellName')?.value?.trim() || '';
+      const email = document.getElementById('authShellEmail')?.value?.trim() || '';
+      const password = document.getElementById('authShellPassword')?.value || '';
+      const status = document.getElementById('authStatus');
+
+      if (!email || !password || (mode === 'signup' && !name)) {
+        if (status) {
+          status.textContent = 'Please complete every required field.';
+          status.classList.remove('success');
+          status.classList.add('error');
+        }
+        return;
+      }
+
+      try {
+        const payload = mode === 'signup' ? { name, email, password } : { email, password };
+        const data = await apiFetch(`/api/auth/${mode === 'signup' ? 'signup' : 'login'}`, {
+          method: 'POST',
+          body: JSON.stringify(payload)
+        });
+
+        backend.token = data.token;
+        localStorage.setItem(AUTH_TOKEN_KEY, data.token);
+        applyServerProfile(data.user);
+        document.getElementById('authShell')?.classList.add('hidden');
+        document.getElementById('analyzerWorkspace')?.classList.add('visible');
+        if (status) {
+          status.textContent = 'Authentication successful.';
+          status.classList.remove('error');
+          status.classList.add('success');
+        }
+      } catch (error) {
+        if (status) {
+          status.textContent = error.message || 'Authentication failed.';
+          status.classList.remove('success');
+          status.classList.add('error');
+        }
+      }
+    }
+
     /* ==========================================================================
        4. INITIALIZATION & UI RENDERING
        ========================================================================== */
+    const ROLE_ATMOSPHERE = {
+      "ai-ml-engineer": { a: "#c7d2fe", b: "#fce7f3", c: "#a5f3fc", glow: "rgba(79, 70, 229, 0.24)" },
+      "generative-ai-engineer": { a: "#ddd6fe", b: "#f5d0fe", c: "#e0e7ff", glow: "rgba(124, 58, 237, 0.26)" },
+      "cloud-engineer": { a: "#bae6fd", b: "#e0f2fe", c: "#c7d2fe", glow: "rgba(2, 132, 199, 0.26)" },
+      "devops-platform-engineer": { a: "#a7f3d0", b: "#d1fae5", c: "#bae6fd", glow: "rgba(5, 150, 105, 0.24)" },
+      "cybersecurity-engineer": { a: "#fecdd3", b: "#e0e7ff", c: "#fecaca", glow: "rgba(225, 29, 72, 0.22)" },
+      "data-engineer": { a: "#bfdbfe", b: "#dbeafe", c: "#c7d2fe", glow: "rgba(37, 99, 235, 0.24)" },
+      "backend-software-engineer": { a: "#c7d2fe", b: "#e0e7ff", c: "#a5b4fc", glow: "rgba(67, 56, 202, 0.26)" },
+      "fullstack-developer": { a: "#a5f3fc", b: "#c7d2fe", c: "#bae6fd", glow: "rgba(8, 145, 178, 0.24)" },
+      "mlops-engineer": { a: "#fde68a", b: "#e0e7ff", c: "#fef3c7", glow: "rgba(217, 119, 6, 0.22)" },
+      "software-engineer-ai-skills": { a: "#c4b5fd", b: "#e0e7ff", c: "#ddd6fe", glow: "rgba(109, 40, 217, 0.24)" },
+      "data-analyst": { a: "#fde68a", b: "#fed7aa", c: "#e0f2fe", glow: "rgba(245, 158, 11, 0.22)" },
+      "security-analyst": { a: "#fecdd3", b: "#fecaca", c: "#e0e7ff", glow: "rgba(190, 18, 60, 0.22)" }
+    };
+
     document.addEventListener("DOMContentLoaded", () => {
       renderRoleGrid();
       init3DCardParallax();
-      // Select the first role by default for instant delight
-      selectRole(ROLES_DATA[0].id);
+      initPageParallax();
+
+      document.querySelectorAll('.auth-toggle-btn').forEach((button) => {
+        button.addEventListener('click', () => setAuthPageMode(button.dataset.mode));
+      });
+      document.getElementById('authForm')?.addEventListener('submit', handleAuthShellSubmit);
+
+      pingBackend().then(async (live) => {
+        if (live && backend.token) {
+          await restoreSession();
+        } else {
+          document.getElementById('authShell')?.classList.add('hidden');
+          document.getElementById('analyzerWorkspace')?.classList.add('visible');
+        }
+        if (!state.selectedRoleId) {
+          selectRole(ROLES_DATA[0].id);
+        }
+        updateAuthChrome();
+      });
     });
+
+    function applyRoleAtmosphere(roleId) {
+      const palette = ROLE_ATMOSPHERE[roleId] || ROLE_ATMOSPHERE["backend-software-engineer"];
+      const root = document.documentElement;
+      root.style.setProperty("--role-glow-a", palette.a);
+      root.style.setProperty("--role-glow-b", palette.b);
+      root.style.setProperty("--role-glow-c", palette.c);
+      root.style.setProperty("--role-accent-glow", palette.glow);
+      document.body.dataset.roleTint = roleId;
+    }
+
+    function initPageParallax() {
+      if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+
+      const layer = document.getElementById("ambientParallax");
+      const hero = document.getElementById("heroParallax");
+      if (!layer && !hero) return;
+
+      let targetX = 0;
+      let targetY = 0;
+      let currentX = 0;
+      let currentY = 0;
+      let rafId = null;
+
+      window.addEventListener("mousemove", (e) => {
+        targetX = (e.clientX / window.innerWidth) - 0.5;
+        targetY = (e.clientY / window.innerHeight) - 0.5;
+        if (!rafId) rafId = requestAnimationFrame(tick);
+      });
+
+      function tick() {
+        currentX += (targetX - currentX) * 0.08;
+        currentY += (targetY - currentY) * 0.08;
+
+        if (layer) {
+          layer.style.transform = `translate3d(${currentX * 28}px, ${currentY * 18}px, 0)`;
+        }
+        if (hero) {
+          hero.style.transform = `translate3d(${currentX * -14}px, ${currentY * -10}px, 0)`;
+        }
+
+        if (Math.abs(targetX - currentX) > 0.001 || Math.abs(targetY - currentY) > 0.001) {
+          rafId = requestAnimationFrame(tick);
+        } else {
+          rafId = null;
+        }
+      }
+    }
 
     /* 3D Parallax Mouse Tracking on Hero Showcase Card */
     function init3DCardParallax() {
       const card = document.getElementById("hero3DCard");
       if (!card) return;
+      if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
 
       card.addEventListener("mousemove", (e) => {
         const rect = card.getBoundingClientRect();
@@ -3252,6 +4185,8 @@
       const role = ROLES_DATA.find(r => r.id === roleId);
       if (!role) return;
 
+      applyRoleAtmosphere(roleId);
+
       // Update role selection cards
       document.querySelectorAll(".role-card").forEach(el => el.classList.remove("selected"));
       const selectedEl = document.getElementById(`roleCard-${roleId}`);
@@ -3272,6 +4207,7 @@
 
       // Reset previous results if user changes role
       document.getElementById("resultsSection").classList.remove("visible");
+      scheduleProfileSave();
     }
 
     function renderSkillsRating() {
@@ -3334,6 +4270,7 @@
       const val = parseInt(value, 10);
       state.userRatings[skillId] = val;
       updateSkillPillUI(skillId, val);
+      scheduleProfileSave();
     }
 
     function setSkillRating(skillId, value) {
@@ -3341,6 +4278,7 @@
       const slider = document.getElementById(`slider-${skillId}`);
       if (slider) slider.value = value;
       updateSkillPillUI(skillId, value);
+      scheduleProfileSave();
     }
 
     function updateSkillPillUI(skillId, val) {
@@ -3365,6 +4303,7 @@
         state.userRatings[s.id] = level;
       });
       renderSkillsRating();
+      scheduleProfileSave();
     }
 
     function matchAllRequired() {
@@ -3374,6 +4313,7 @@
         state.userRatings[s.id] = s.level;
       });
       renderSkillsRating();
+      scheduleProfileSave();
     }
 
     /* ==========================================================================
@@ -3394,6 +4334,7 @@
       if (!state.extraSkills.includes(value)) {
         state.extraSkills.push(value);
         renderExtraSkills();
+        scheduleProfileSave();
       }
       input.value = "";
     }
@@ -3401,6 +4342,7 @@
     function removeExtraSkill(index) {
       state.extraSkills.splice(index, 1);
       renderExtraSkills();
+      scheduleProfileSave();
     }
 
     function renderExtraSkills() {
@@ -3539,6 +4481,8 @@
         if (analysis.matchScore >= 85) {
           triggerConfetti();
         }
+
+        scheduleProfileSave();
 
       }, 480); // 480ms perceived calculation
     }
@@ -3845,6 +4789,7 @@
 
       updateRoadmapUI();
       updateRoadmapButtonState(skillId, type);
+      scheduleProfileSave();
     }
 
     function updateRoadmapButtonState(skillId, type) {
@@ -3869,6 +4814,7 @@
         if (state.roadmap[key].done) {
           triggerConfetti();
         }
+        scheduleProfileSave();
       }
     }
 
@@ -3878,6 +4824,7 @@
         delete state.roadmap[key];
         updateRoadmapUI();
         updateRoadmapButtonState(item.skillId, item.type);
+        scheduleProfileSave();
       }
     }
 

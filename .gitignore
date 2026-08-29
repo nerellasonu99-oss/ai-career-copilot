@@ -17,3 +17,9 @@ Thumbs.db
 node_modules/
 dist/
 build/
+
+# Environment files and secrets
+.env
+.env.*
+backend/.env
+backend/.env.*
