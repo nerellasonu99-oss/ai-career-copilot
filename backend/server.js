@@ -33,7 +33,10 @@ const stackPayload = () => {
       database: db.engine,
       dbMode: db.mode,
       auth: 'JWT (7-day) + bcrypt password hashing',
-      persistence: ['selected role', 'skill ratings', 'extra skills', 'learning roadmap']
+      persistence: ['selected role', 'skill ratings', 'extra skills', 'learning roadmap'],
+      coach: process.env.GEMINI_API_KEY && !/your_free_gemini_api_key_here/i.test(process.env.GEMINI_API_KEY)
+        ? 'Google Gemini'
+        : 'Local fallback (set GEMINI_API_KEY)'
     },
     routes: [
       'GET /api/health',
@@ -42,7 +45,9 @@ const stackPayload = () => {
       'GET /api/auth/me',
       'GET /api/profile',
       'PUT /api/profile/save',
-      'GET /api/roles'
+      'GET /api/roles',
+      'GET /api/chat/status',
+      'POST /api/chat'
     ]
   };
 };
@@ -54,6 +59,7 @@ app.get('/api/health', (req, res) => {
 app.use('/api/auth', require('./routes/auth'));
 app.use('/api/profile', require('./routes/profile'));
 app.use('/api/roles', require('./routes/roles'));
+app.use('/api/chat', require('./routes/chat'));
 
 app.use((req, res, next) => {
   const blocked = req.path.startsWith('/backend') || req.path.includes('.env') || req.path.includes('node_modules');
@@ -69,17 +75,38 @@ app.get('/', (req, res) => {
 
 app.use(express.static(frontendRoot, { index: false }));
 
-const PORT = process.env.PORT || 5000;
+const PORT = Number(process.env.PORT) || 5000;
 
-connectDB().then(async () => {
-  try {
-    await seedDemoUser();
-  } catch (error) {
-    console.warn('Demo user seed skipped:', error.message);
-  }
+const startServer = (port = PORT, attemptsLeft = 10) => new Promise((resolve, reject) => {
+  const server = app.listen(port, () => {
+    console.log(`AI Career Copilot running at http://localhost:${port}`);
+    console.log('Open that URL for the full-stack demo (UI + API + Career Coach).');
+    resolve(server);
+  });
 
-  app.listen(PORT, () => {
-    console.log(`AI Career Copilot running at http://localhost:${PORT}`);
-    console.log('Open that URL for the full-stack demo (UI + API).');
+  server.on('error', (error) => {
+    if (error.code === 'EADDRINUSE' && attemptsLeft > 0) {
+      console.warn(`Port ${port} is busy. Trying ${port + 1}...`);
+      setTimeout(() => {
+        startServer(port + 1, attemptsLeft - 1).then(resolve).catch(reject);
+      }, 200);
+      return;
+    }
+    reject(error);
   });
 });
+
+connectDB()
+  .then(async () => {
+    try {
+      await seedDemoUser();
+    } catch (error) {
+      console.warn('Demo user seed skipped:', error.message);
+    }
+
+    await startServer();
+  })
+  .catch((error) => {
+    console.warn('Database unavailable; starting app in degraded demo mode.', error.message);
+    startServer();
+  });

@@ -277,6 +277,293 @@
       color: #166534;
     }
 
+    .chat-widget {
+      position: fixed;
+      right: 22px;
+      bottom: 22px;
+      z-index: 80;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 12px;
+      pointer-events: none;
+    }
+
+    .chat-toggle,
+    .chat-close,
+    .chat-send {
+      font-family: var(--font-display);
+    }
+
+    .chat-toggle {
+      pointer-events: auto;
+      border: 1px solid rgba(79, 70, 229, 0.28);
+      border-radius: 999px;
+      background: linear-gradient(135deg, rgba(79, 70, 229, 0.96), rgba(14, 165, 233, 0.9));
+      color: #ffffff;
+      font-size: 0.85rem;
+      font-weight: 800;
+      letter-spacing: 0.02em;
+      padding: 12px 18px;
+      box-shadow: 0 18px 38px -18px rgba(79, 70, 229, 0.95), 0 0 24px rgba(56, 189, 248, 0.18);
+      cursor: pointer;
+      transition: transform var(--transition-fast), box-shadow var(--transition-fast), filter var(--transition-fast);
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      user-select: none;
+    }
+
+    .chat-toggle:hover {
+      transform: translateY(-2px) scale(1.01);
+      box-shadow: 0 22px 42px -18px rgba(79, 70, 229, 1), 0 0 30px rgba(56, 189, 248, 0.24);
+      filter: saturate(1.12);
+    }
+
+    .chat-toggle::before {
+      content: "✦";
+      font-size: 0.8rem;
+    }
+
+    .chat-panel {
+      pointer-events: auto;
+      width: min(380px, calc(100vw - 28px));
+      background: rgba(255, 255, 255, 0.9);
+      border: 1px solid rgba(148, 163, 184, 0.35);
+      border-radius: 22px;
+      overflow: hidden;
+      box-shadow: 0 28px 50px -26px rgba(15, 23, 42, 0.35), 0 0 0 1px rgba(255, 255, 255, 0.35) inset;
+      backdrop-filter: blur(18px);
+      display: none;
+      transform: translateY(10px);
+      opacity: 0;
+      transition: opacity var(--transition-normal), transform var(--transition-normal);
+    }
+
+    .chat-panel.open {
+      display: block;
+      opacity: 1;
+      transform: translateY(0);
+      animation: chatPanelIn 240ms ease-out;
+    }
+
+    @keyframes chatPanelIn {
+      from {
+        opacity: 0;
+        transform: translateY(10px) scale(0.985);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+    }
+
+    .chat-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 14px 16px;
+      background: linear-gradient(135deg, rgba(79, 70, 229, 0.14), rgba(56, 189, 248, 0.09));
+      border-bottom: 1px solid rgba(203, 213, 225, 0.8);
+      font-weight: 800;
+      color: var(--text-primary);
+    }
+
+    .chat-header span {
+      font-size: 0.92rem;
+      letter-spacing: 0.01em;
+    }
+
+    .chat-close {
+      display: inline-grid;
+      place-items: center;
+      width: 28px;
+      height: 28px;
+      border: none;
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.8);
+      color: var(--text-secondary);
+      font-size: 1.2rem;
+      line-height: 1;
+      cursor: pointer;
+      transition: background var(--transition-fast), color var(--transition-fast), transform var(--transition-fast);
+    }
+
+    .chat-close:hover {
+      background: rgba(79, 70, 229, 0.08);
+      color: var(--text-primary);
+      transform: rotate(90deg);
+    }
+
+    .chat-body {
+      max-height: 330px;
+      overflow-y: auto;
+      background: linear-gradient(180deg, rgba(248, 250, 252, 0.96), rgba(241, 245, 249, 0.86));
+      padding: 14px 14px 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .chat-message {
+      max-width: 82%;
+      border-radius: 16px;
+      padding: 10px 12px;
+      font-size: 0.88rem;
+      line-height: 1.5;
+      color: var(--text-primary);
+      word-break: break-word;
+      box-shadow: 0 8px 20px -14px rgba(15, 23, 42, 0.26);
+      animation: chatMessageIn 180ms ease-out;
+    }
+
+    @keyframes chatMessageIn {
+      from {
+        opacity: 0;
+        transform: translateY(4px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .chat-message.bot {
+      align-self: flex-start;
+      background: linear-gradient(135deg, rgba(226, 232, 240, 0.98), rgba(203, 213, 225, 0.92));
+      border-bottom-left-radius: 6px;
+    }
+
+    .chat-message.user {
+      align-self: flex-end;
+      background: linear-gradient(135deg, #4f46e5, #3b82f6);
+      color: #ffffff;
+      border-bottom-right-radius: 6px;
+    }
+
+    .chat-form {
+      display: flex;
+      gap: 8px;
+      padding: 12px 14px 14px;
+      background: rgba(255, 255, 255, 0.92);
+      border-top: 1px solid rgba(203, 213, 225, 0.8);
+    }
+
+    .chat-input {
+      flex: 1;
+      min-width: 0;
+      border: 1px solid rgba(148, 163, 184, 0.7);
+      border-radius: 12px;
+      background: rgba(248, 250, 252, 0.96);
+      color: var(--text-primary);
+      padding: 11px 12px;
+      font-size: 0.9rem;
+      outline: none;
+      transition: border-color var(--transition-fast), box-shadow var(--transition-fast), background var(--transition-fast);
+    }
+
+    .chat-input:focus {
+      border-color: rgba(79, 70, 229, 0.6);
+      background: #ffffff;
+      box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.08);
+    }
+
+    .chat-send {
+      border: none;
+      border-radius: 12px;
+      background: linear-gradient(135deg, #0f172a, #1d4ed8);
+      color: white;
+      font-size: 0.82rem;
+      font-weight: 800;
+      padding: 0 14px;
+      min-width: 74px;
+      cursor: pointer;
+      transition: transform var(--transition-fast), box-shadow var(--transition-fast), opacity var(--transition-fast);
+      box-shadow: 0 14px 24px -16px rgba(30, 64, 175, 0.8);
+    }
+
+    .chat-send:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 18px 30px -18px rgba(30, 64, 175, 0.9);
+    }
+
+    .chat-send:disabled {
+      opacity: 0.7;
+      cursor: wait;
+      transform: none;
+    }
+
+    .chat-header-copy {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      min-width: 0;
+    }
+
+    .chat-status {
+      font-size: 0.68rem;
+      font-weight: 700;
+      color: var(--text-muted);
+      letter-spacing: 0.02em;
+    }
+
+    .chat-status.online {
+      color: #059669;
+    }
+
+    .chat-suggestions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      padding: 0 14px 10px;
+      background: rgba(255, 255, 255, 0.92);
+    }
+
+    .chat-chip {
+      border: 1px solid #c7d2fe;
+      background: #eef2ff;
+      color: #3730a3;
+      border-radius: 999px;
+      padding: 6px 10px;
+      font-size: 0.72rem;
+      font-weight: 700;
+      cursor: pointer;
+      font-family: var(--font-display);
+    }
+
+    .chat-chip:hover {
+      background: #e0e7ff;
+    }
+
+    .chat-message.bot.typing {
+      display: inline-flex;
+      gap: 5px;
+      align-items: center;
+      min-width: 54px;
+    }
+
+    .chat-message.bot.typing span {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: #64748b;
+      animation: chatDot 1s ease-in-out infinite;
+    }
+
+    .chat-message.bot.typing span:nth-child(2) { animation-delay: 0.15s; }
+    .chat-message.bot.typing span:nth-child(3) { animation-delay: 0.3s; }
+
+    @keyframes chatDot {
+      0%, 80%, 100% { opacity: 0.25; transform: translateY(0); }
+      40% { opacity: 1; transform: translateY(-3px); }
+    }
+
+    .chat-message.bot.error {
+      background: #fff1f2;
+      color: #9f1239;
+    }
+
     .analyzer-workspace {
       display: none;
     }
@@ -2540,6 +2827,29 @@
       .score-metric-number {
         font-size: 3rem;
       }
+
+      .chat-widget {
+        right: 10px;
+        left: 10px;
+        bottom: 10px;
+        align-items: stretch;
+      }
+
+      .chat-toggle {
+        align-self: flex-end;
+      }
+
+      .chat-panel.open {
+        width: 100%;
+        height: min(78dvh, 640px);
+        display: flex;
+        flex-direction: column;
+      }
+
+      .chat-body {
+        flex: 1;
+        max-height: none;
+      }
     }
 
     @media (prefers-reduced-motion: reduce) {
@@ -2959,6 +3269,31 @@
 
     </main>
 
+  </div>
+
+  <div class="chat-widget" id="chatWidget">
+    <button class="chat-toggle" id="chatToggle" type="button" aria-expanded="false">Career Coach</button>
+    <div class="chat-panel" id="chatPanel">
+      <div class="chat-header">
+        <div class="chat-header-copy">
+          <span>AI Career Coach</span>
+          <span class="chat-status" id="chatStatus">Connecting…</span>
+        </div>
+        <button class="chat-close" id="chatClose" type="button" aria-label="Close chat">×</button>
+      </div>
+      <div class="chat-body" id="chatBody">
+        <div class="chat-message bot">Hi! Ask about your role path, skill gaps, or the fastest next steps.</div>
+      </div>
+      <div class="chat-suggestions" id="chatSuggestions">
+        <button type="button" class="chat-chip" data-chat-prompt="What should I learn first?">What should I learn first?</button>
+        <button type="button" class="chat-chip" data-chat-prompt="How do I use this app?">How do I use this app?</button>
+        <button type="button" class="chat-chip" data-chat-prompt="Give me a 7-day study plan">7-day study plan</button>
+      </div>
+      <form class="chat-form" id="chatForm">
+        <input id="chatInput" class="chat-input" type="text" placeholder="Ask your career coach…" autocomplete="off" maxlength="500" />
+        <button class="chat-send" type="submit">Send</button>
+      </form>
+    </div>
   </div>
 
   <!-- ==========================================================================
@@ -3732,7 +4067,7 @@
     ];
 
     const AUTH_TOKEN_KEY = "acc_auth_token";
-    const API_BASE = (function resolveApiBase() {
+    let API_BASE = (function resolveApiBase() {
       if (location.protocol === "file:") return "http://localhost:5000";
       if (location.port === "5000") return "";
       return `${location.protocol}//${location.hostname}:5000`;
@@ -3867,18 +4202,42 @@
     }
 
     async function pingBackend() {
-      try {
-        const started = performance.now();
-        const health = await apiFetch("/api/health");
-        const ms = Math.round(performance.now() - started);
-        backend.live = true;
-        backend.health = health;
-        return true;
-      } catch (error) {
-        backend.live = false;
-        backend.health = null;
-        return false;
+      const candidates = [];
+      const seen = new Set();
+      const add = (base) => {
+        const key = base === undefined ? "__same__" : base;
+        if (seen.has(key)) return;
+        seen.add(key);
+        candidates.push(base);
+      };
+
+      add(API_BASE);
+      if (location.protocol === "http:" || location.protocol === "https:") {
+        add("");
       }
+      for (let port = 5000; port <= 5008; port += 1) {
+        add(`http://localhost:${port}`);
+      }
+
+      for (const base of candidates) {
+        try {
+          const started = performance.now();
+          const response = await fetch(`${base}/api/health`, { headers: { Accept: "application/json" } });
+          const health = await response.json().catch(() => ({}));
+          if (!response.ok || !health.ok) continue;
+          API_BASE = base;
+          backend.live = true;
+          backend.health = health;
+          backend.pingMs = Math.round(performance.now() - started);
+          return true;
+        } catch (error) {
+          // try next candidate
+        }
+      }
+
+      backend.live = false;
+      backend.health = null;
+      return false;
     }
 
     function applyServerProfile(user) {
@@ -4049,6 +4408,139 @@
       "security-analyst": { a: "#fecdd3", b: "#fecaca", c: "#e0e7ff", glow: "rgba(190, 18, 60, 0.22)" }
     };
 
+    const chatState = {
+      open: false,
+      history: [],
+      loading: false
+    };
+
+    function getChatContext() {
+      const role = ROLES_DATA.find((item) => item.id === state.selectedRoleId);
+      const analysis = state.lastAnalysisResult;
+      const gaps = analysis
+        ? [...(analysis.missing || []), ...(analysis.needsWork || [])]
+            .slice(0, 5)
+            .map((skill) => skill.name || skill.skillName)
+            .filter(Boolean)
+        : [];
+      const roadmap = Object.values(state.roadmap || {}).slice(0, 5).map((item) => item.courseTitle || item.skillName);
+
+      return {
+        roleLabel: role ? role.label : '',
+        matchScore: analysis && Number.isFinite(analysis.matchScore) ? analysis.matchScore : null,
+        topGaps: gaps,
+        roadmap
+      };
+    }
+
+    function formatBotHtml(text) {
+      return escapeHTML(text)
+        .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+        .replace(/\n/g, '<br>');
+    }
+
+    function setChatStatus(text, online) {
+      const el = document.getElementById('chatStatus');
+      if (!el) return;
+      el.textContent = text;
+      el.classList.toggle('online', !!online);
+    }
+
+    async function pingChatStatus() {
+      try {
+        const data = await apiFetch('/api/chat/status');
+        if (data.configured) {
+          setChatStatus('Gemini online', true);
+        } else {
+          setChatStatus('Local coach (add GEMINI_API_KEY)', false);
+        }
+      } catch (error) {
+        setChatStatus('Open http://localhost:5000 so the API can connect', false);
+      }
+    }
+
+    function toggleChatPanel() {
+      const panel = document.getElementById('chatPanel');
+      const toggle = document.getElementById('chatToggle');
+      if (!panel || !toggle) return;
+      chatState.open = !chatState.open;
+      panel.classList.toggle('open', chatState.open);
+      toggle.textContent = chatState.open ? 'Close coach' : 'Career Coach';
+      toggle.setAttribute('aria-expanded', String(chatState.open));
+      if (chatState.open) {
+        pingChatStatus();
+        setTimeout(() => document.getElementById('chatInput')?.focus(), 60);
+      }
+    }
+
+    async function sendChatMessage(message) {
+      const input = document.getElementById('chatInput');
+      const body = document.getElementById('chatBody');
+      const form = document.getElementById('chatForm');
+      const sendButton = form?.querySelector('.chat-send');
+      if (!body || !input) return;
+
+      const clean = String(message || '').trim();
+      if (!clean || chatState.loading) return;
+
+      chatState.loading = true;
+      if (sendButton) sendButton.disabled = true;
+      input.disabled = true;
+
+      const userMessage = document.createElement('div');
+      userMessage.className = 'chat-message user';
+      userMessage.textContent = clean;
+      body.appendChild(userMessage);
+      input.value = '';
+
+      const waiting = document.createElement('div');
+      waiting.className = 'chat-message bot typing';
+      waiting.innerHTML = '<span></span><span></span><span></span>';
+      body.appendChild(waiting);
+      body.scrollTop = body.scrollHeight;
+
+      try {
+        const response = await fetch(apiUrl('/api/chat'), {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            message: clean,
+            history: chatState.history,
+            context: getChatContext()
+          })
+        });
+
+        const data = await response.json().catch(() => ({}));
+        if (!response.ok) {
+          throw new Error(data.message || 'Chat request failed');
+        }
+
+        const reply = data.reply || 'I could not answer that right now.';
+        chatState.history.push({ role: 'user', content: clean });
+        chatState.history.push({ role: 'assistant', content: reply });
+        waiting.classList.remove('typing');
+        waiting.innerHTML = formatBotHtml(reply);
+        if (data.source === 'gemini') {
+          setChatStatus('Gemini online', true);
+        } else if (data.warning) {
+          setChatStatus('Local coach · Gemini busy', false);
+        }
+      } catch (error) {
+        waiting.classList.remove('typing');
+        waiting.classList.add('error');
+        const offline = /Failed to fetch|NetworkError/i.test(error.message || '');
+        waiting.textContent = offline
+          ? 'Cannot reach the backend. Start it with npm run dev in backend, then open http://localhost:5000'
+          : (error.message || 'The coach is unavailable right now.');
+      } finally {
+        chatState.loading = false;
+        if (sendButton) sendButton.disabled = false;
+        input.disabled = false;
+        input.focus();
+        body.scrollTop = body.scrollHeight;
+      }
+    }
+
     document.addEventListener("DOMContentLoaded", () => {
       renderRoleGrid();
       init3DCardParallax();
@@ -4058,6 +4550,23 @@
         button.addEventListener('click', () => setAuthPageMode(button.dataset.mode));
       });
       document.getElementById('authForm')?.addEventListener('submit', handleAuthShellSubmit);
+      document.getElementById('chatToggle')?.addEventListener('click', toggleChatPanel);
+      document.getElementById('chatClose')?.addEventListener('click', toggleChatPanel);
+      document.getElementById('chatForm')?.addEventListener('submit', (event) => {
+        event.preventDefault();
+        const input = document.getElementById('chatInput');
+        if (input) sendChatMessage(input.value);
+      });
+      document.getElementById('chatInput')?.addEventListener('keydown', (event) => {
+        if (event.key === 'Escape' && chatState.open) {
+          toggleChatPanel();
+        }
+      });
+      document.querySelectorAll('[data-chat-prompt]').forEach((chip) => {
+        chip.addEventListener('click', () => sendChatMessage(chip.dataset.chatPrompt));
+      });
+
+      pingChatStatus();
 
       pingBackend().then(async (live) => {
         if (live && backend.token) {

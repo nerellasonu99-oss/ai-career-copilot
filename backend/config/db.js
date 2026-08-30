@@ -34,7 +34,13 @@ const encodeMongoUri = (uri) => {
   return `${scheme}${user}:${password}@${rest}`;
 };
 
-const hasPlaceholderCredentials = (uri) => !uri || /<[^>]+>/.test(uri);
+const looksLikeLocalMongo = (uri) => /127\.0\.0\.1:27017|localhost:27017/i.test(String(uri || ''));
+
+const hasPlaceholderCredentials = (uri) => {
+  if (!uri) return false;
+  const value = String(uri);
+  return /<[^>]+>|USER|PASSWORD|your_.*_here|placeholder|example\.com/i.test(value);
+};
 
 const connectMemory = async () => {
   const { MongoMemoryServer } = require('mongodb-memory-server');
@@ -50,8 +56,10 @@ const connectDB = async () => {
   const mongoUri = process.env.MONGO_URI;
   const useMemoryDb = process.env.USE_MEMORY_DB === 'true';
 
-  if (useMemoryDb || hasPlaceholderCredentials(mongoUri)) {
-    if (hasPlaceholderCredentials(mongoUri) && !useMemoryDb) {
+  if (useMemoryDb || hasPlaceholderCredentials(mongoUri) || looksLikeLocalMongo(mongoUri)) {
+    if (looksLikeLocalMongo(mongoUri) && !useMemoryDb) {
+      console.warn('MONGO_URI points at local MongoDB which is not running. Using in-memory MongoDB.');
+    } else if (hasPlaceholderCredentials(mongoUri) && !useMemoryDb) {
       console.warn('MONGO_URI still contains <placeholders>. Using in-memory MongoDB for local development.');
     }
     return connectMemory();

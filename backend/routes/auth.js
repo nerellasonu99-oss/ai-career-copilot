@@ -1,6 +1,16 @@
 const express = require('express');
+const mongoose = require('mongoose');
 const jwt = require('jsonwebtoken');
 const User = require('../models/User');
+
+const requireDb = (res) => {
+  if (mongoose.connection.readyState !== 1) {
+    return res.status(503).json({
+      message: 'Database is unavailable right now. Please retry in a moment.'
+    });
+  }
+  return null;
+};
 
 const router = express.Router();
 
@@ -9,6 +19,9 @@ const generateToken = (id) => {
 };
 
 router.post('/signup', async (req, res) => {
+  const dbError = requireDb(res);
+  if (dbError) return dbError;
+
   const { name, email, password } = req.body;
 
   if (!name || !email || !password) {
@@ -43,6 +56,9 @@ router.post('/signup', async (req, res) => {
 });
 
 router.get('/me', async (req, res) => {
+  const dbError = requireDb(res);
+  if (dbError) return dbError;
+
   const header = req.headers.authorization || '';
   const token = header.startsWith('Bearer ') ? header.split(' ')[1] : null;
 
@@ -75,6 +91,9 @@ router.get('/me', async (req, res) => {
 });
 
 router.post('/login', async (req, res) => {
+  const dbError = requireDb(res);
+  if (dbError) return dbError;
+
   const { email, password } = req.body;
 
   if (!email || !password) {
